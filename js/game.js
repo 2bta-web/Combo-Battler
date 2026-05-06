@@ -955,6 +955,7 @@ document.getElementById('layout-reset').addEventListener('click', () => { playWa
 document.getElementById('layout-close').addEventListener('click', () => { playCloseSound(); closeLayoutEditor(); });
 
 loadHighScore();
+initAudio();
 
 document.getElementById('bd-toggle').addEventListener('click', () => {
     const detail = document.getElementById('bd-detail');

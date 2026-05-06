@@ -22,6 +22,7 @@ function getVolume() {
 
 function playTone(freq, endFreq, type, duration, volume, delay) {
     if (!audioCtx || !masterGain) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
     const t = (delay || 0) + audioCtx.currentTime;
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
