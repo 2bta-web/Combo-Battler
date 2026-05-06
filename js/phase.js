@@ -8,17 +8,17 @@ const CHOICE_OPTIONS = document.getElementById('choice-options');
 const UPGRADES = [
     { id: 1, name: '攻撃力UP', desc: '与ダメージ+25%' },
     { id: 2, name: 'クリティカル', desc: '10%の確率で3倍ダメージ' },
-    { id: 3, name: 'コンボ倍率UP', desc: 'コンボ倍率ベース+0.1（最大1回）' },
-    { id: 4, name: 'ターゲット拡大', desc: 'ターゲットの半径+15%（最大2回）' },
-    { id: 5, name: '余裕UP', desc: 'ターゲットが消えるまでの時間+20%（最大2回）' },
+    { id: 3, name: 'コンボ倍率UP', desc: 'コンボ倍率ベース+0.1（取得は1回のみ）' },
+    { id: 4, name: 'ターゲット拡大', desc: 'ターゲットの半径+15%（取得は2回まで）' },
+    { id: 5, name: '余裕UP', desc: 'ターゲットが消えるまでの時間+20%（取得は2回まで）' },
     { id: 6, name: 'スコアブースト', desc: '獲得スコア+30%' },
-    { id: 7, name: 'コンボセーフ', desc: 'ミス時にコンボ3をキープ（重ねるとキープ量増加）' },
-    { id: 8, name: 'チェイン', desc: '5コンボ達成ごとに250ポイント（最大1回）' },
-    { id: 9, name: 'ラッキー', desc: '10%の確率でフェーズ×100の追加ダメージ（最大1回）' },
+    { id: 7, name: 'コンボセーフ', desc: 'ミス時のコンボ減少を3軽減（重ねると軽減量増加）' },
+    { id: 8, name: 'チェイン', desc: '5コンボ達成ごとに250ポイント（取得は1回のみ）' },
+    { id: 9, name: 'ラッキー', desc: '10%の確率でフェーズ×100の追加ダメージ（取得は1回のみ）' },
     { id: 10, name: 'フィニッシャー', desc: 'フェーズクリア時にフェーズ×15スコア加算' },
     { id: 11, name: '連撃', desc: '15%の確率でダメージ2倍（重ねると段階的強化）' },
-    { id: 12, name: '吸収', desc: '敵撃破時にボーナス+200スコア（最大1回）' },
-    { id: 13, name: 'エコー', desc: '15%の確率で100%追加ダメージ（最大2回）' },
+    { id: 12, name: '吸収', desc: '敵撃破時に+200スコア（取得は1回のみ）' },
+    { id: 13, name: 'エコー', desc: '15%の確率で100%追加ダメージ（取得は2回まで）' },
     { id: 14, name: '障壁', desc: 'ミスを1回無効化（使い切り、重ねると回数増加）' },
     { id: 15, name: 'オーラ', desc: '10コンボごとに+1.5（例:30コンボで+4.5）' }
 ];
@@ -144,7 +144,7 @@ function isUpgradeAvailable(id) {
     if (id === 3 && (getComboMultiplierUp && getComboMultiplierUp() > 0)) return false;
     if (id === 4 && (getTargetSizeBonus && getTargetSizeBonus() >= 0.30)) return false;
     if (id === 5 && (getSpawnTimeBonus && getSpawnTimeBonus() >= 0.40)) return false;
-    if (id === 8 && (getChainBonus && getChainBonus() > 0)) return false;
+    if (id === 8 && (getChainAmount && getChainAmount() > 0)) return false;
     if (id === 9 && (getLuckyChance && getLuckyChance() > 0)) return false;
     if (id === 12 && (getAbsorbBonus && getAbsorbBonus() > 0)) return false;
     if (id === 13 && (getEchoRate && getEchoRate() >= 0.30)) return false;

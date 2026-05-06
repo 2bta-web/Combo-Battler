@@ -2,31 +2,46 @@ let gameState = 'start';
 let gameLoopId = null;
 let targetSpawnTimer = null;
 let stats = { perfect: 0, good: 0, ok: 0, early: 0, miss: 0, totalHits: 0, maxCombo: 0, blue: 0, purple: 0, gold: 0, red: 0 };
-let scoreBreakdown = { damage: 0, chain: 0, absorb: 0, finisher: 0 };
+let scoreBreakdown = { base: 0, crit: 0, doubleStrike: 0, echo: 0, lucky: 0, damage: 0, feverBonus: 0, chain: 0, absorb: 0, finisher: 0 };
 let startTime = 0;
 
 const START_SCREEN = document.getElementById('start-screen');
 const RESULT_SCREEN = document.getElementById('result-screen');
 
+let confirmCallback = null;
+
 document.getElementById('pause-retire-btn').addEventListener('click', () => {
-    document.getElementById('confirm-modal').classList.remove('hidden');
+    playWarningSound();
+    showConfirmModal('リタイアしますか？', () => retireGame());
 });
 document.getElementById('confirm-yes').addEventListener('click', () => {
+    playConfirmSound();
     document.getElementById('confirm-modal').classList.add('hidden');
-    retireGame();
+    const cb = confirmCallback;
+    confirmCallback = null;
+    if (cb) cb();
 });
 document.getElementById('confirm-no').addEventListener('click', () => {
+    playCancelSound();
     document.getElementById('confirm-modal').classList.add('hidden');
+    confirmCallback = null;
 });
-document.getElementById('pause-resume-btn').addEventListener('click', resumeGame);
+
+function showConfirmModal(title, onYes) {
+    document.getElementById('confirm-title').textContent = title;
+    confirmCallback = onYes;
+    document.getElementById('confirm-modal').classList.remove('hidden');
+}
+document.getElementById('pause-resume-btn').addEventListener('click', () => { playConfirmSound(); resumeGame(); });
 
 document.getElementById('mobile-pause-btn').addEventListener('click', () => {
+    playOpenSound();
     if (gameState === 'playing' || gameState === 'phaseTransition') pauseGame();
 });
 document.getElementById('restart-btn').addEventListener('click', () => {
     startGame(window.gameMode || 'standard');
 });
-document.getElementById('title-btn').addEventListener('click', goToTitle);
+document.getElementById('title-btn').addEventListener('click', () => { playCloseSound(); goToTitle(); });
 
 document.addEventListener('keydown', (e) => {
     if (e.key === ' ' || e.key === 'Enter') {
@@ -46,6 +61,7 @@ document.addEventListener('keydown', (e) => {
         }
         if (!document.getElementById('confirm-modal').classList.contains('hidden')) {
             document.getElementById('confirm-modal').classList.add('hidden');
+            confirmCallback = null;
             return;
         }
         if (!document.getElementById('layout-editor').classList.contains('hidden')) {
@@ -60,6 +76,7 @@ document.addEventListener('keydown', (e) => {
 // Settings
 const SETTINGS_MODAL = document.getElementById('settings-modal');
 document.getElementById('settings-btn').addEventListener('click', () => {
+    playOpenSound();
     SETTINGS_MODAL.classList.remove('hidden');
     const savedVol = Math.round((parseFloat(localStorage.getItem('comboBattlerVolume') || '1')) * 100);
     document.getElementById('settings-volume').value = savedVol;
@@ -67,7 +84,16 @@ document.getElementById('settings-btn').addEventListener('click', () => {
     const shake = localStorage.getItem('comboBattlerShake') || 'strong';
     document.querySelectorAll('#settings-shake .toggle-option').forEach(el => el.classList.toggle('active', el.dataset.value === shake));
 });
-document.getElementById('settings-close').addEventListener('click', () => SETTINGS_MODAL.classList.add('hidden'));
+document.getElementById('settings-close').addEventListener('click', () => { playCloseSound(); SETTINGS_MODAL.classList.add('hidden'); });
+document.getElementById('settings-clear-data').addEventListener('click', () => {
+    playWarningSound();
+    showConfirmModal('ハイスコア・設定・レイアウトをすべて消去します。よろしいですか？', () => {
+        showConfirmModal('本当に消去しますか？この操作は元に戻せません。', () => {
+            localStorage.clear();
+            location.reload();
+        });
+    });
+});
 document.getElementById('settings-volume').addEventListener('input', (e) => {
     document.getElementById('settings-volume-label').textContent = e.target.value;
     setVolume(e.target.value / 100);
@@ -83,6 +109,7 @@ document.getElementById('settings-shake').addEventListener('click', (e) => {
 // Pause tabs
 document.querySelectorAll('.pause-tab').forEach(tab => {
     tab.addEventListener('click', () => {
+        playCancelSound();
         document.querySelectorAll('.pause-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.pause-tab-content').forEach(c => c.classList.remove('active'));
         tab.classList.add('active');
@@ -139,7 +166,7 @@ function getModeLabel() {
 
 function initGame() {
     stats = { perfect: 0, good: 0, ok: 0, early: 0, miss: 0, totalHits: 0, maxCombo: 0, blue: 0, purple: 0, gold: 0, red: 0 };
-    scoreBreakdown = { damage: 0, chain: 0, absorb: 0, finisher: 0 };
+    scoreBreakdown = { base: 0, crit: 0, doubleStrike: 0, echo: 0, lucky: 0, damage: 0, feverBonus: 0, chain: 0, absorb: 0, finisher: 0 };
     initAudio();
     initPhase();
     initCombo();
@@ -254,25 +281,31 @@ window.onTargetHit = function(judgment, targetType) {
     }
 
     const comboMult = getMultiplier();
-    let actualDamage = Math.floor(baseDmg * comboMult);
+    const preCritDmg = Math.floor(baseDmg * comboMult);
+    let actualDamage = preCritDmg;
 
     let isCritical = false;
     if (getCriticalRate() > 0 && Math.random() < getCriticalRate()) {
         actualDamage = Math.floor(actualDamage * 3);
         isCritical = true;
+        scoreBreakdown.crit += actualDamage - preCritDmg;
         addLog('クリティカル!');
     }
 
+    scoreBreakdown.base += preCritDmg;
     damageEnemy(actualDamage, isCritical);
     addCombo();
-    scoreBreakdown.damage += Math.floor(actualDamage * (isFever() ? 2 : 1) * typeScoreMultiplier * getScoreMultiplier());
+    const mainScoreNoFever = Math.floor(actualDamage * typeScoreMultiplier * getScoreMultiplier());
     if (targetType === 'blue') stats.blue++;
     else if (targetType === 'purple') stats.purple++;
     else if (targetType === 'gold') stats.gold++;
     else if (targetType === 'red') stats.red++;
     else stats.blue++;
     const scoreMult = isFever() ? 2 : 1;
-    addScore(Math.floor(actualDamage * scoreMult * typeScoreMultiplier * getScoreMultiplier()));
+    const mainScoreFinal = Math.floor(actualDamage * scoreMult * typeScoreMultiplier * getScoreMultiplier());
+    addScore(mainScoreFinal);
+    scoreBreakdown.damage += mainScoreNoFever;
+    if (isFever()) scoreBreakdown.feverBonus += mainScoreFinal - mainScoreNoFever;
     updateCombatInfo();
 
     const combo = getCombo();
@@ -351,7 +384,11 @@ window.onTargetHit = function(judgment, targetType) {
     if (dsMult > 1) {
         const extraDmg = Math.floor(actualDamage * (dsMult - 1));
         damageEnemy(extraDmg);
+        const dsScoreNoFever = extraDmg;
         addScore(Math.floor(extraDmg * scoreMult));
+        scoreBreakdown.doubleStrike += extraDmg;
+        scoreBreakdown.damage += dsScoreNoFever;
+        if (isFever()) scoreBreakdown.feverBonus += Math.floor(extraDmg * scoreMult) - dsScoreNoFever;
         updateCombatInfo();
         addLog(`連撃! x${dsMult} +${extraDmg}`);
         if (getEnemyHPPercent() <= 0) { enemyDefeated(); return; }
@@ -360,7 +397,11 @@ window.onTargetHit = function(judgment, targetType) {
     if (checkLucky()) {
         const luckyDmg = Math.floor(getPhase() * 100);
         damageEnemy(luckyDmg);
+        const luckyScoreNoFever = luckyDmg;
         addScore(Math.floor(luckyDmg * scoreMult));
+        scoreBreakdown.lucky += luckyDmg;
+        scoreBreakdown.damage += luckyScoreNoFever;
+        if (isFever()) scoreBreakdown.feverBonus += Math.floor(luckyDmg * scoreMult) - luckyScoreNoFever;
         updateCombatInfo();
         addLog('🍀 ラッキー!');
         if (getEnemyHPPercent() <= 0) { enemyDefeated(); return; }
@@ -369,7 +410,11 @@ window.onTargetHit = function(judgment, targetType) {
     if (isEcho()) {
         const echoDmg = Math.floor(actualDamage * 1.0);
         damageEnemy(echoDmg);
+        const echoScoreNoFever = echoDmg;
         addScore(Math.floor(echoDmg * scoreMult));
+        scoreBreakdown.echo += echoDmg;
+        scoreBreakdown.damage += echoScoreNoFever;
+        if (isFever()) scoreBreakdown.feverBonus += Math.floor(echoDmg * scoreMult) - echoScoreNoFever;
         updateCombatInfo();
         addLog(`エコー! +${echoDmg}`);
         if (getEnemyHPPercent() <= 0) { enemyDefeated(); return; }
@@ -553,10 +598,21 @@ function updateResultStats() {
             list.appendChild(d);
         }
     }
-    document.getElementById('breakdown-damage').textContent = scoreBreakdown.damage.toLocaleString();
-    document.getElementById('breakdown-chain').textContent = scoreBreakdown.chain.toLocaleString();
-    document.getElementById('breakdown-absorb').textContent = scoreBreakdown.absorb.toLocaleString();
-    document.getElementById('breakdown-finisher').textContent = scoreBreakdown.finisher.toLocaleString();
+    const bd = scoreBreakdown;
+    const dmgTotal = bd.base + bd.crit + bd.doubleStrike + bd.echo + bd.lucky;
+    const scoreTotal = bd.damage + bd.feverBonus + bd.chain + bd.absorb + bd.finisher;
+    document.getElementById('bd-damage-total').textContent = dmgTotal.toLocaleString();
+    document.getElementById('bd-score-total').textContent = scoreTotal.toLocaleString();
+    document.getElementById('bd-base').textContent = bd.base.toLocaleString();
+    document.getElementById('bd-crit').textContent = bd.crit.toLocaleString();
+    document.getElementById('bd-ds').textContent = bd.doubleStrike.toLocaleString();
+    document.getElementById('bd-echo').textContent = bd.echo.toLocaleString();
+    document.getElementById('bd-lucky').textContent = bd.lucky.toLocaleString();
+    document.getElementById('bd-damage').textContent = bd.damage.toLocaleString();
+    document.getElementById('bd-fever').textContent = bd.feverBonus.toLocaleString();
+    document.getElementById('bd-chain').textContent = bd.chain.toLocaleString();
+    document.getElementById('bd-absorb').textContent = bd.absorb.toLocaleString();
+    document.getElementById('bd-finisher').textContent = bd.finisher.toLocaleString();
 }
 
 function getHighScoreForMode(mode) {
@@ -891,25 +947,30 @@ function applyLayout() {
     });
 }
 
-document.getElementById('settings-layout-btn').addEventListener('click', openLayoutEditor);
-document.getElementById('pause-layout-btn').addEventListener('click', openLayoutEditor);
-document.getElementById('layout-preset').addEventListener('click', applyPreset);
-document.getElementById('layout-save').addEventListener('click', saveLayout);
-document.getElementById('layout-reset').addEventListener('click', resetLayout);
-document.getElementById('layout-close').addEventListener('click', closeLayoutEditor);
+document.getElementById('settings-layout-btn').addEventListener('click', () => { playOpenSound(); openLayoutEditor(); });
+document.getElementById('pause-layout-btn').addEventListener('click', () => { playOpenSound(); openLayoutEditor(); });
+document.getElementById('layout-preset').addEventListener('click', () => { playConfirmSound(); applyPreset(); });
+document.getElementById('layout-save').addEventListener('click', () => { playConfirmSound(); saveLayout(); });
+document.getElementById('layout-reset').addEventListener('click', () => { playWarningSound(); resetLayout(); });
+document.getElementById('layout-close').addEventListener('click', () => { playCloseSound(); closeLayoutEditor(); });
 
 loadHighScore();
 
+document.getElementById('bd-toggle').addEventListener('click', () => {
+    const detail = document.getElementById('bd-detail');
+    detail.classList.toggle('hidden');
+    document.getElementById('bd-toggle').textContent = detail.classList.contains('hidden') ? '[詳細▼]' : '[詳細▲]';
+});
+
 function applyPreset() {
     const gc = document.getElementById('game-container');
-    const gw = gc.offsetWidth;
-    const gh = gc.offsetHeight;
+    const gcRect = gc.getBoundingClientRect();
     const preset = {
-        'phase-area': { top: 10, left: Math.round(gw * 0.35) },
-        'score-area': { top: 10, left: Math.round(gw * 0.55) },
-        'combo-area': { top: Math.round(gh * 0.25), left: Math.round(gw * 0.46) },
-        'streak-area': { top: Math.round(gh * 0.25) + 166 + 10, left: Math.round(gw * 0.46) },
-        'log-container': { top: 110, left: 10 }
+        'phase-area': { top: 10, left: 882 },
+        'score-area': { top: 10, left: 1436 },
+        'combo-area': { top: 686, left: 888, w: 99, h: 166 },
+        'streak-area': { top: 761, left: 891, w: 93, h: 57 },
+        'log-container': { top: 110, left: 10, w: 360 }
     };
     LAYOUT_ITEMS.forEach(id => {
         const el = document.getElementById(id);
@@ -918,8 +979,8 @@ function applyPreset() {
         el.style.top = preset[id].top + 'px';
         el.style.left = preset[id].left + 'px';
         el.style.right = 'auto';
-        el.style.width = '';
-        el.style.height = '';
+        if (preset[id].w) el.style.width = preset[id].w + 'px';
+        if (preset[id].h) el.style.height = preset[id].h + 'px';
         el.querySelectorAll('*').forEach(c => c.style.fontSize = '');
     });
 }

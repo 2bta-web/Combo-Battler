@@ -55,6 +55,14 @@ function playSelectSound() {
     setTimeout(() => playTone(900, 1100, 'triangle', 0.06, 0.12), 70);
     setTimeout(() => playTone(1200, 800, 'sine', 0.12, 0.2), 140);
 }
+function playOpenSound() { playTone(500, 800, 'sine', 0.1, 0.07); }
+function playCloseSound() { playTone(700, 500, 'sine', 0.08, 0.06); }
+function playConfirmSound() { 
+    playTone(600, null, 'sine', 0.06, 0.06);
+    setTimeout(() => playTone(800, null, 'sine', 0.06, 0.06), 60);
+}
+function playCancelSound() { playTone(400, 300, 'sine', 0.06, 0.05); }
+function playWarningSound() { playTone(200, 100, 'sawtooth', 0.2, 0.1); }
 function playGameClearSound() {
     [0, 0.12, 0.24, 0.36].forEach((delay, i) => playTone(600 + i * 200, null, 'sine', 0.25, 0.12, delay));
     setTimeout(() => playTone(1400, 1800, 'sine', 0.3, 0.18), 480);

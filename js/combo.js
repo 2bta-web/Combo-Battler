@@ -29,6 +29,7 @@ let bonusMultipliers = {
 function initCombo() {
     combo = 0;
     perfectStreak = 0;
+    updateStreakDisplay();
     feverActive = false;
     feverCooldown = false;
     barrierCharges = 0;
@@ -97,6 +98,7 @@ function getChainBonus() {
     if (bonusMultipliers.chain > 0 && combo % 5 === 0) return bonusMultipliers.chain;
     return 0;
 }
+function getChainAmount() { return bonusMultipliers.chain; }
 
 function isEcho() {
     return bonusMultipliers.echo > 0 && Math.random() < bonusMultipliers.echo;
@@ -316,8 +318,6 @@ function getRunUpgrades() { return runUpgrades; }
 function updateStreakDisplay() {
     const el = document.getElementById('streak-value');
     if (!el) return;
-    if (perfectStreak <= 1) { el.textContent = ''; return; }
-    if (perfectStreak === 2) { el.textContent = 'あと1!'; el.style.color = '#ffd700'; return; }
-    el.textContent = perfectStreak + '連続';
+    el.textContent = perfectStreak + ' Streak';
     el.style.color = '#ff6b6b';
 }

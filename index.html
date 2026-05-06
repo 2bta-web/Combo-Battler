@@ -105,12 +105,24 @@
             <div class="result-newrecord hidden" id="new-record">★ ニューレコード! ★</div>
             <div class="result-highscore">ハイスコア: <span id="highscore-value">0</span></div>
             <div class="result-playtime">プレイ時間: <span id="playtime-value">00:00</span></div>
-            <div class="result-breakdown">
-                <div class="result-section-title">スコア内訳</div>
-                <div>与ダメ: <span id="breakdown-damage">0</span></div>
-                <div>チェイン: <span id="breakdown-chain">0</span></div>
-                <div>吸収: <span id="breakdown-absorb">0</span></div>
-                <div>フィニッシャー: <span id="breakdown-finisher">0</span></div>
+            <div class="result-breakdown" id="result-breakdown">
+                <div class="result-bd-row">合計ダメ: <span id="bd-damage-total">0</span></div>
+                <div class="result-bd-row">合計スコア: <span id="bd-score-total">0</span></div>
+                <div class="result-bd-toggle" id="bd-toggle">[詳細▼]</div>
+                <div id="bd-detail" class="hidden">
+                    <div class="bd-section-title">ダメージ内訳</div>
+                    <div class="bd-row">基本: <span id="bd-base">0</span></div>
+                    <div class="bd-row">クリティカル: <span id="bd-crit">0</span></div>
+                    <div class="bd-row">連撃: <span id="bd-ds">0</span></div>
+                    <div class="bd-row">エコー: <span id="bd-echo">0</span></div>
+                    <div class="bd-row">ラッキー: <span id="bd-lucky">0</span></div>
+                    <div class="bd-section-title">スコア内訳</div>
+                    <div class="bd-row">与ダメスコア: <span id="bd-damage">0</span></div>
+                    <div class="bd-row">フィーバー加点: <span id="bd-fever">0</span></div>
+                    <div class="bd-row">チェイン: <span id="bd-chain">0</span></div>
+                    <div class="bd-row">吸収: <span id="bd-absorb">0</span></div>
+                    <div class="bd-row">フィニッシャー: <span id="bd-finisher">0</span></div>
+                </div>
             </div>
             <div class="result-stats">
                 <div>Perfect: <span id="stat-perfect">0</span></div>
@@ -183,12 +195,13 @@
                 </div>
             </div>
             <button id="settings-layout-btn">レイアウト編集</button>
+            <button id="settings-clear-data">データをすべて消去</button>
             <button id="settings-close">閉じる</button>
         </div>
 
         <div id="layout-editor" class="hidden">
             <div id="layout-actions">
-                <button id="layout-preset">プリセット</button>
+                <button id="layout-preset">おすすめ配置(PC用)</button>
                 <button id="layout-save">保存</button>
                 <button id="layout-reset">リセット</button>
                 <button id="layout-close">戻る</button>
@@ -198,7 +211,7 @@
         <div id="confirm-modal" class="hidden">
             <div class="confirm-overlay"></div>
             <div class="confirm-card">
-                <div class="confirm-title">リタイアしますか？</div>
+                <div class="confirm-title" id="confirm-title">リタイアしますか？</div>
                 <div class="confirm-buttons">
                     <button id="confirm-yes">はい</button>
                     <button id="confirm-no">いいえ</button>
