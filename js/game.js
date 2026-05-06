@@ -2,7 +2,7 @@ let gameState = 'start';
 let gameLoopId = null;
 let targetSpawnTimer = null;
 let stats = { perfect: 0, good: 0, ok: 0, early: 0, miss: 0, totalHits: 0, maxCombo: 0, blue: 0, purple: 0, gold: 0, red: 0 };
-let scoreBreakdown = { base: 0, crit: 0, doubleStrike: 0, echo: 0, lucky: 0, damage: 0, feverBonus: 0, chain: 0, absorb: 0, finisher: 0 };
+let scoreBreakdown = { base: 0, crit: 0, doubleStrike: 0, echo: 0, lucky: 0, damage: 0, feverBonus: 0, chain: 0, absorb: 0, finisher: 0, streak: 0 };
 let startTime = 0;
 
 const START_SCREEN = document.getElementById('start-screen');
@@ -167,7 +167,7 @@ function getModeLabel() {
 
 function initGame() {
     stats = { perfect: 0, good: 0, ok: 0, early: 0, miss: 0, totalHits: 0, maxCombo: 0, blue: 0, purple: 0, gold: 0, red: 0 };
-    scoreBreakdown = { base: 0, crit: 0, doubleStrike: 0, echo: 0, lucky: 0, damage: 0, feverBonus: 0, chain: 0, absorb: 0, finisher: 0 };
+    scoreBreakdown = { base: 0, crit: 0, doubleStrike: 0, echo: 0, lucky: 0, damage: 0, feverBonus: 0, chain: 0, absorb: 0, finisher: 0, streak: 0 };
     initAudio();
     initPhase();
     initCombo();
@@ -324,6 +324,7 @@ window.onTargetHit = function(judgment, targetType) {
         if (streakMult > 0) {
             const bonus = Math.floor(actualDamage * streakMult);
             damageEnemy(bonus);
+            scoreBreakdown.streak += bonus;
             addLog(`＋${bonus} ストリークボーナス!`);
             if (getEnemyHPPercent() <= 0) { enemyDefeated(); return; }
         }
@@ -601,7 +602,7 @@ function updateResultStats() {
         }
     }
     const bd = scoreBreakdown;
-    const dmgTotal = bd.base + bd.crit + bd.doubleStrike + bd.echo + bd.lucky;
+    const dmgTotal = bd.base + bd.crit + bd.doubleStrike + bd.echo + bd.lucky + bd.streak;
     const scoreTotal = bd.damage + bd.feverBonus + bd.chain + bd.absorb + bd.finisher;
     document.getElementById('bd-damage-total').textContent = dmgTotal.toLocaleString();
     document.getElementById('bd-score-total').textContent = scoreTotal.toLocaleString();
@@ -610,6 +611,7 @@ function updateResultStats() {
     document.getElementById('bd-ds').textContent = bd.doubleStrike.toLocaleString();
     document.getElementById('bd-echo').textContent = bd.echo.toLocaleString();
     document.getElementById('bd-lucky').textContent = bd.lucky.toLocaleString();
+    document.getElementById('bd-streak').textContent = bd.streak.toLocaleString();
     document.getElementById('bd-damage').textContent = bd.damage.toLocaleString();
     document.getElementById('bd-fever').textContent = bd.feverBonus.toLocaleString();
     document.getElementById('bd-chain').textContent = bd.chain.toLocaleString();
@@ -966,8 +968,9 @@ document.getElementById('bd-toggle').addEventListener('click', () => {
 });
 
 function applyPreset() {
-    const gc = document.getElementById('game-container');
-    const gcRect = gc.getBoundingClientRect();
+    const gw = window.innerWidth;
+    const gh = window.innerHeight;
+    const MARGIN = 60;
     const preset = {
         'phase-area': { top: 10, left: 882 },
         'score-area': { top: 10, left: 1436 },
@@ -979,8 +982,9 @@ function applyPreset() {
         const el = document.getElementById(id);
         if (!el || !preset[id]) return;
         el.style.position = 'absolute';
-        el.style.top = preset[id].top + 'px';
-        el.style.left = preset[id].left + 'px';
+        const maxTop = gh - 150 - (preset[id].h || 40);
+        el.style.top = Math.min(preset[id].top, maxTop) + 'px';
+        el.style.left = Math.min(preset[id].left, gw - MARGIN) + 'px';
         el.style.right = 'auto';
         if (preset[id].w) el.style.width = preset[id].w + 'px';
         if (preset[id].h) el.style.height = preset[id].h + 'px';
