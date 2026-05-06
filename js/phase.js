@@ -7,7 +7,7 @@ const CHOICE_OPTIONS = document.getElementById('choice-options');
 
 const UPGRADES = [
     { id: 1, name: '攻撃力UP', desc: '与ダメージ+25%' },
-    { id: 2, name: 'クリティカル', desc: '10%の確率で3倍ダメージ' },
+    { id: 2, name: 'クリティカル', desc: '10%の確率で3倍ダメージ（重ねると段階的強化）' },
     { id: 3, name: 'コンボ倍率UP', desc: 'コンボ倍率ベース+0.1（取得は1回のみ）' },
     { id: 4, name: 'ターゲット拡大', desc: 'ターゲットの半径+15%（取得は2回まで）' },
     { id: 5, name: '余裕UP', desc: 'ターゲットが消えるまでの時間+20%（取得は2回まで）' },
@@ -18,7 +18,7 @@ const UPGRADES = [
     { id: 10, name: 'フィニッシャー', desc: 'フェーズクリア時にフェーズ×15スコア加算' },
     { id: 11, name: '連撃', desc: '15%の確率でダメージ2倍（重ねると段階的強化）' },
     { id: 12, name: '吸収', desc: '敵撃破時に+200スコア（取得は1回のみ）' },
-    { id: 13, name: 'エコー', desc: '15%の確率で100%追加ダメージ（取得は2回まで）' },
+    { id: 13, name: 'エコー', desc: '20%の確率で100%追加ダメージ（取得は2回まで）' },
     { id: 14, name: '障壁', desc: 'ミスを1回無効化（使い切り、重ねると回数増加）' },
     { id: 15, name: 'オーラ', desc: '10コンボごとに+1.5（例:30コンボで+4.5）' }
 ];
@@ -147,7 +147,7 @@ function isUpgradeAvailable(id) {
     if (id === 8 && (getChainAmount && getChainAmount() > 0)) return false;
     if (id === 9 && (getLuckyChance && getLuckyChance() > 0)) return false;
     if (id === 12 && (getAbsorbBonus && getAbsorbBonus() > 0)) return false;
-    if (id === 13 && (getEchoRate && getEchoRate() >= 0.30)) return false;
+    if (id === 13 && (getEchoRate && getEchoRate() >= 0.40)) return false;
     return true;
 }
 

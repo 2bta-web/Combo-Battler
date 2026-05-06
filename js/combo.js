@@ -87,6 +87,17 @@ function getScoreMultiplier() { return 1 + bonusMultipliers.scoreUp; }
 function getAbsorbBonus() { return bonusMultipliers.absorb; }
 function getTargetSizeBonus() { return bonusMultipliers.targetSizeUp; }
 function getSpawnTimeBonus() { return bonusMultipliers.spawnTimeUp; }
+function getCriticalMultiplier() {
+    const rate = bonusMultipliers.criticalRate;
+    if (rate <= 0) return 1;
+    let mult = 1, remaining = rate;
+    while (remaining > 0) {
+        if (Math.random() < Math.min(1, remaining)) mult *= 3;
+        remaining -= 1;
+    }
+    return mult;
+}
+
 function getEchoRate() { return bonusMultipliers.echo; }
 function getBarrierCharges() { return barrierCharges; }
 function consumeBarrier() { if (barrierCharges > 0) { barrierCharges--; return true; } return false; }
@@ -251,7 +262,13 @@ function getActiveUpgrades() {
         return false;
     }
     if (b.attackUp > 0) list.push(`攻撃力UP +${Math.round(b.attackUp * 100)}%`);
-    if (b.criticalRate > 0) list.push(`クリティカル ${Math.round(b.criticalRate * 100)}%×3`);
+    if (b.criticalRate > 0) {
+        const rate = b.criticalRate;
+        const g = Math.floor(rate);
+        const r = rate - g;
+        if (g === 0 || r === 0) list.push(`クリティカル ${Math.round(rate * 100)}%で${Math.pow(3, g + 1)}倍`);
+        else list.push(`クリティカル ${Math.round(rate * 100)}%（${Math.round(r * 100)}%で${Math.pow(3, g + 1)}倍）`);
+    }
     if (b.comboMultiplierUp > 0) list.push(`コンボ倍率UP (base+${b.comboMultiplierUp.toFixed(1)})${isMax(3) ? ' (max)' : ''}`);
     if (b.targetSizeUp > 0) list.push(`ターゲット拡大 +${Math.round(b.targetSizeUp * 100)}%${isMax(4) ? ' (max)' : ''}`);
     if (b.spawnTimeUp > 0) list.push(`余裕UP +${Math.round(b.spawnTimeUp * 100)}%${isMax(5) ? ' (max)' : ''}`);
@@ -260,9 +277,15 @@ function getActiveUpgrades() {
     if (b.chain > 0) list.push(`チェイン +${b.chain}${isMax(8) ? ' (max)' : ''}`);
     if (b.lucky > 0) list.push(`ラッキー ${Math.round(b.lucky * 100)}%追加ダメ${isMax(9) ? ' (max)' : ''}`);
     if (b.finisher > 0) list.push(`フィニッシャー x${b.finisher}`);
-    if (b.doubleStrike > 0) list.push(`連撃 ${Math.round(b.doubleStrike * 100)}%×2`);
+    if (b.doubleStrike > 0) {
+        const rate = b.doubleStrike;
+        const g = Math.floor(rate);
+        const r = rate - g;
+        if (g === 0 || r === 0) list.push(`連撃 ${Math.round(rate * 100)}%で${Math.pow(2, g + 1)}倍`);
+        else list.push(`連撃 ${Math.round(rate * 100)}%（${Math.round(r * 100)}%で${Math.pow(2, g + 1)}倍）`);
+    }
     if (b.absorb > 0) list.push(`吸収 +${b.absorb}${isMax(12) ? ' (max)' : ''}`);
-    if (b.echo > 0) list.push(`エコー ${Math.round(b.echo * 100)}%×1.0${isMax(13) ? ' (max)' : ''}`);
+    if (b.echo > 0) list.push(`エコー ${Math.round(b.echo * 100)}%で1.0倍${isMax(13) ? ' (max)' : ''}`);
     if (b.barrier > 0) list.push(`障壁 x${b.barrier} (残${barrierCharges})`);
     if (b.aura > 0) {
         const stacks = Math.round(b.aura / 1.5);
@@ -305,8 +328,8 @@ function applyUpgrade(upgradeId, mult) {
             bonusMultipliers.absorb += 200 * mult;
             break;
         case 13:
-            if (bonusMultipliers.echo >= 0.30) break;
-            bonusMultipliers.echo += 0.15 * mult;
+            if (bonusMultipliers.echo >= 0.40) break;
+            bonusMultipliers.echo += 0.20 * mult;
             break;
         case 14: bonusMultipliers.barrier += Math.round(1 * mult); barrierCharges += Math.round(1 * mult); break;
         case 15: bonusMultipliers.aura += 1.5 * mult; break;

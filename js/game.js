@@ -51,7 +51,7 @@ document.addEventListener('keydown', (e) => {
         } else if (gameState === 'phaseTransition') {
             const el = document.elementFromPoint(mouseX, mouseY);
             const choiceEl = el?.closest('.choice-option');
-            if (choiceEl && choiceEl.style.opacity !== '0.5') choiceEl.click();
+            if (choiceEl) choiceEl.click();
         }
     }
     if (e.key === 'Escape') {
@@ -97,6 +97,7 @@ document.getElementById('settings-clear-data').addEventListener('click', () => {
 document.getElementById('settings-volume').addEventListener('input', (e) => {
     document.getElementById('settings-volume-label').textContent = e.target.value;
     setVolume(e.target.value / 100);
+    playHitSound();
 });
 document.getElementById('settings-shake').addEventListener('click', (e) => {
     const opt = e.target.closest('.toggle-option');
@@ -285,8 +286,9 @@ window.onTargetHit = function(judgment, targetType) {
     let actualDamage = preCritDmg;
 
     let isCritical = false;
-    if (getCriticalRate() > 0 && Math.random() < getCriticalRate()) {
-        actualDamage = Math.floor(actualDamage * 3);
+    const critMult = getCriticalMultiplier();
+    if (critMult > 1) {
+        actualDamage = Math.floor(actualDamage * critMult);
         isCritical = true;
         scoreBreakdown.crit += actualDamage - preCritDmg;
         addLog('クリティカル!');
@@ -588,7 +590,7 @@ function updateResultStats() {
             if (id === '8' && getChainBonus && getChainBonus() > 0) atMax[name] = true;
             if (id === '9' && getLuckyChance && getLuckyChance() > 0) atMax[name] = true;
             if (id === '12' && getAbsorbBonus && getAbsorbBonus() > 0) atMax[name] = true;
-            if (id === '13' && getEchoRate && getEchoRate() >= 0.30) atMax[name] = true;
+            if (id === '13' && getEchoRate && getEchoRate() >= 0.40) atMax[name] = true;
         }
         for (const name in counts) {
             const d = document.createElement('div');
