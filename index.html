@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Combo Battler</title>
+    <!-- OGP tags（Unityroom公開時に有効化） -->
+    <!-- <meta property="og:title" content="Combo Battler"> -->
+    <!-- <meta property="og:description" content="OSU風ターゲットをタイミングよく撃て！コンボを繋いで敵を倒すブラウザゲーム"> -->
+    <!-- <meta property="og:type" content="game"> -->
+    <!-- <meta property="og:image" content="assets/image/ogp.png"> -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="phase-area">
+            <span class="info-label">フェーズ</span>
+            <span id="phase-display">1 / 10</span>
+        </div>
+        <div id="score-area">
+            <span class="info-label">スコア</span>
+            <span id="score-display">0</span>
+        </div>
+
+        <div id="combo-area">
+            <div id="combo-number">0</div>
+            <div id="combo-label">COMBO</div>
+            <div id="multiplier-display">x1.0</div>
+        </div>
+
+        <div id="streak-area">
+            <div id="streak-value"></div>
+        </div>
+
+        <div id="log-container">
+            <div id="log"></div>
+        </div>
+
+        <div id="enemy-area">
+            <div id="enemy">
+                <div id="enemy-body"></div>
+                <div id="boss-label" class="hidden">BOSS</div>
+                <div id="enemy-hp-bar">
+                    <div id="enemy-hp-fill"></div>
+                </div>
+                <div id="damage-popup-container"></div>
+            </div>
+            <div id="target-layer"></div>
+            <div id="fever-overlay"></div>
+            <div id="fever-text"></div>
+        </div>
+
+        <div id="fever-timer" class="hidden"></div>
+
+        <div id="pause-overlay" class="hidden">
+            <div id="pause-text">一時停止中</div>
+            <div id="pause-resume-btn">再開</div>
+            <div class="pause-tabs">
+                <div class="pause-tab active" data-tab="upgrades">強化</div>
+                <div class="pause-tab" data-tab="settings">設定</div>
+            </div>
+            <div class="pause-tab-content active" id="pause-tab-upgrades">
+                <div id="pause-upgrade-section">
+                    <div id="pause-upgrade-label">取得済み強化</div>
+                    <div id="pause-upgrade-list"></div>
+                </div>
+            </div>
+            <div class="pause-tab-content" id="pause-tab-settings">
+                <div class="pause-volume-row">
+                    <span>音量</span>
+                    <input type="range" id="pause-volume" min="0" max="100" value="100">
+                    <span id="pause-volume-label">100</span>
+                </div>
+                <div class="pause-volume-row">
+                    <span>画面揺れ</span>
+                    <div class="toggle-group" id="pause-shake">
+                        <span class="toggle-option" data-value="strong">強</span>
+                        <span class="toggle-option" data-value="weak">弱</span>
+                        <span class="toggle-option" data-value="off">切</span>
+                    </div>
+                </div>
+            </div>
+            <div class="pause-volume-row">
+                <button id="pause-layout-btn">レイアウト編集</button>
+            </div>
+            <div id="pause-retire-btn">リタイア</div>
+        </div>
+
+        <div id="text-box">
+            <div id="text-content"></div>
+        </div>
+
+        <div id="choice-modal" class="hidden">
+            <div class="choice-header">選択肢</div>
+            <div id="choice-options"></div>
+        </div>
+
+        <button id="mobile-pause-btn">⏸</button>
+
+        <div id="result-screen" class="hidden">
+            <div class="result-title" id="result-title">ゲームオーバー</div>
+            <div class="result-mode">モード: <span id="result-mode-display">Standard</span></div>
+            <div class="result-score">最終スコア: <span id="final-score">0</span></div>
+            <div class="result-phase">到達フェーズ: <span id="final-phase">1</span></div>
+            <div class="result-newrecord hidden" id="new-record">★ ニューレコード! ★</div>
+            <div class="result-highscore">ハイスコア: <span id="highscore-value">0</span></div>
+            <div class="result-playtime">プレイ時間: <span id="playtime-value">00:00</span></div>
+            <div class="result-breakdown">
+                <div class="result-section-title">スコア内訳</div>
+                <div>与ダメ: <span id="breakdown-damage">0</span></div>
+                <div>チェイン: <span id="breakdown-chain">0</span></div>
+                <div>吸収: <span id="breakdown-absorb">0</span></div>
+                <div>フィニッシャー: <span id="breakdown-finisher">0</span></div>
+            </div>
+            <div class="result-stats">
+                <div>Perfect: <span id="stat-perfect">0</span></div>
+                <div>Good: <span id="stat-good">0</span></div>
+                <div>OK: <span id="stat-ok">0</span></div>
+                <div>Miss: <span id="stat-miss">0</span></div>
+                <div>Early: <span id="stat-early">0</span></div>
+                <div>最大コンボ: <span id="stat-maxcombo">0</span></div>
+                <div>精度: <span id="stat-accuracy">-</span></div>
+            </div>
+            <div class="result-targets">
+                <div>🟦青: <span id="stat-blue">0</span></div>
+                <div>🟪紫: <span id="stat-purple">0</span></div>
+                <div>🟨金: <span id="stat-gold">0</span></div>
+                <div>🟥赤: <span id="stat-red">0</span></div>
+            </div>
+            <div class="result-upgrades">
+                <div class="result-section-title">取得強化</div>
+                <div id="result-upgrade-list"></div>
+            </div>
+            <button id="restart-btn">もう一度</button>
+            <button id="title-btn">タイトルに戻る</button>
+        </div>
+
+        <div id="start-screen">
+            <div id="settings-btn">設定</div>
+            <div class="start-title">Combo Battler</div>
+            <div class="start-subtitle">タイミングよく撃て！</div>
+            <div class="mode-select-title">モードを選べ</div>
+            <div class="mode-buttons">
+                <div class="mode-btn" data-mode="standard">
+                    <div class="mode-btn-name">Standard</div>
+                    <div class="mode-btn-desc">10フェーズ 標準難易度</div>
+                </div>
+                <div class="mode-btn" data-mode="hard">
+                    <div class="mode-btn-name">Hard</div>
+                    <div class="mode-btn-desc">10フェーズ 超速タイミング</div>
+                </div>
+                <div class="mode-btn" data-mode="endless">
+                    <div class="mode-btn-name">Endless</div>
+                    <div class="mode-btn-desc">上限なし スコアアタック</div>
+                </div>
+            </div>
+            <div class="start-highscore">
+                <span>Standard: <span id="hs-standard">0</span></span>
+                <span class="hs-sep">|</span>
+                <span>Hard: <span id="hs-hard">0</span></span>
+                <span class="hs-sep">|</span>
+                <span>Endless: <span id="hs-endless">0</span></span>
+            </div>
+            <div class="start-tutorial">
+                <div>Space / Enter / 左クリック: 攻撃 &nbsp;|&nbsp; Esc: ポーズ</div>
+                <div>📱 タップ: 攻撃 &nbsp;|&nbsp; ⏸: ポーズ</div>
+            </div>
+        </div>
+
+        <div id="settings-modal" class="hidden">
+            <div class="settings-title">設定</div>
+            <div class="settings-row">
+                <span>音量</span>
+                <input type="range" id="settings-volume" min="0" max="100" value="100">
+                <span id="settings-volume-label">100</span>
+            </div>
+            <div class="settings-row">
+                <span>画面揺れ</span>
+                <div class="toggle-group" id="settings-shake">
+                    <span class="toggle-option" data-value="strong">強</span>
+                    <span class="toggle-option" data-value="weak">弱</span>
+                    <span class="toggle-option" data-value="off">切</span>
+                </div>
+            </div>
+            <button id="settings-layout-btn">レイアウト編集</button>
+            <button id="settings-close">閉じる</button>
+        </div>
+
+        <div id="layout-editor" class="hidden">
+            <div id="layout-actions">
+                <button id="layout-preset">プリセット</button>
+                <button id="layout-save">保存</button>
+                <button id="layout-reset">リセット</button>
+                <button id="layout-close">戻る</button>
+            </div>
+        </div>
+
+        <div id="confirm-modal" class="hidden">
+            <div class="confirm-overlay"></div>
+            <div class="confirm-card">
+                <div class="confirm-title">リタイアしますか？</div>
+                <div class="confirm-buttons">
+                    <button id="confirm-yes">はい</button>
+                    <button id="confirm-no">いいえ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/enemy.js"></script>
+    <script src="js/combo.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/particles.js"></script>
+    <script src="js/targets.js"></script>
+    <script src="js/phase.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
