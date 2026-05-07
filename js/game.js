@@ -158,6 +158,7 @@ function startGame(mode) {
     resumeAudio();
     playGameStartSound();
     startGameLoop();
+    fitToScreen();
 }
 
 function getModeLabel() {
@@ -550,6 +551,7 @@ function goToTitle() {
     loadHighScore();
     applyLayout();
     document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected'));
+    fitToScreen();
 }
 
 function updateResultStats() {
@@ -735,6 +737,19 @@ function getGameState() {
     return gameState;
 }
 
+function fitToScreen() {
+    const c = document.getElementById('game-container');
+    const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    if (s >= 1 || !document.getElementById('layout-editor').classList.contains('hidden')) {
+        c.style.transform = '';
+        return;
+    }
+    c.style.transformOrigin = 'center center';
+    c.style.transform = 'scale(' + s + ')';
+}
+
+window.addEventListener('resize', fitToScreen);
+
 /* Layout editor */
 const LAYOUT_ITEMS = ['phase-area', 'score-area', 'combo-area', 'log-container', 'streak-area'];
 
@@ -742,6 +757,7 @@ function openLayoutEditor() {
     document.getElementById('settings-modal').classList.add('hidden');
     document.getElementById('pause-overlay').classList.add('hidden');
     document.getElementById('layout-editor').classList.remove('hidden');
+    fitToScreen();
 
     LAYOUT_ITEMS.forEach(id => {
         const el = document.getElementById(id);
@@ -770,6 +786,7 @@ function closeLayoutEditor() {
     } else if (gameState === 'start') {
         document.getElementById('settings-modal').classList.remove('hidden');
     }
+    fitToScreen();
 }
 
 function startDrag(e) {
@@ -960,6 +977,7 @@ document.getElementById('layout-close').addEventListener('click', () => { playCl
 
 loadHighScore();
 initAudio();
+fitToScreen();
 
 document.getElementById('bd-toggle').addEventListener('click', () => {
     const detail = document.getElementById('bd-detail');
