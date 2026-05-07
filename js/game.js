@@ -97,7 +97,7 @@ document.getElementById('settings-clear-data').addEventListener('click', () => {
 document.getElementById('settings-volume').addEventListener('input', (e) => {
     document.getElementById('settings-volume-label').textContent = e.target.value;
     setVolume(e.target.value / 100);
-    playHitSound();
+    playPreviewSound();
 });
 document.getElementById('settings-shake').addEventListener('click', (e) => {
     const opt = e.target.closest('.toggle-option');

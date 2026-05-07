@@ -7,11 +7,11 @@ function initAudio() {
     masterGain = audioCtx.createGain();
     masterGain.connect(audioCtx.destination);
     const saved = parseFloat(localStorage.getItem('comboBattlerVolume') || '1');
-    masterGain.gain.value = Math.max(0, Math.min(1, saved));
+    masterGain.gain.value = Math.max(0, Math.min(3, saved));
 }
 
 function setVolume(val) {
-    const v = Math.max(0, Math.min(1, parseFloat(val)));
+    const v = Math.max(0, Math.min(3, parseFloat(val)));
     if (masterGain) masterGain.gain.value = v;
     try { localStorage.setItem('comboBattlerVolume', String(v)); } catch(e) {}
 }
@@ -38,6 +38,7 @@ function playTone(freq, endFreq, type, duration, volume, delay) {
 }
 
 function playHitSound() { playTone(600, 200, 'sine', 0.1, 0.15); }
+function playPreviewSound() { playTone(600, 200, 'sine', 0.1, 0.015); }
 function playGoodSound() { playTone(500, 400, 'sine', 0.08, 0.1); }
 function playOkSound() { playTone(400, 300, 'sine', 0.08, 0.08); }
 function playMissSound() { playTone(150, 80, 'sawtooth', 0.2, 0.1); }
@@ -63,7 +64,7 @@ function playConfirmSound() {
     setTimeout(() => playTone(800, null, 'sine', 0.06, 0.06), 60);
 }
 function playCancelSound() { playTone(400, 300, 'sine', 0.06, 0.05); }
-function playWarningSound() { playTone(200, 100, 'sawtooth', 0.2, 0.1); }
+function playWarningSound() { playTone(200, 100, 'sawtooth', 0.2, 0.05); }
 function playGameClearSound() {
     [0, 0.12, 0.24, 0.36].forEach((delay, i) => playTone(600 + i * 200, null, 'sine', 0.25, 0.12, delay));
     setTimeout(() => playTone(1400, 1800, 'sine', 0.3, 0.18), 480);
