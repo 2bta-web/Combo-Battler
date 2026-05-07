@@ -1025,6 +1025,8 @@ body.flash {
     border-radius: 10px;
     padding: 30px;
     min-width: 420px;
+    max-height: 90vh;
+    overflow-y: auto;
     z-index: 500;
 }
 #settings-modal.hidden { display: none; }
@@ -1308,5 +1310,34 @@ body.flash {
         color: #fff;
         font-size: 24px;
         text-align: center;
+    }
+}
+
+@media (max-height: 800px) {
+    .start-title {
+        font-size: 48px;
+        margin-bottom: 8px;
+    }
+    .start-subtitle {
+        font-size: 18px;
+        margin-bottom: 14px;
+    }
+    .mode-btn {
+        width: 160px;
+        height: 78px;
+    }
+    .mode-btn-name {
+        font-size: 17px;
+    }
+    .mode-btn-desc {
+        font-size: 11px;
+    }
+    .start-highscore {
+        font-size: 18px;
+        gap: 16px;
+    }
+    .start-tutorial {
+        font-size: 15px;
+        margin-top: 18px;
     }
 }

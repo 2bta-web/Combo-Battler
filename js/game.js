@@ -969,21 +969,19 @@ document.getElementById('bd-toggle').addEventListener('click', () => {
 
 function applyPreset() {
     const gw = window.innerWidth;
-    const gh = window.innerHeight;
     const MARGIN = 60;
     const preset = {
-        'phase-area': { top: 10, left: 882 },
+        'phase-area': { top: 10, left: 883, w: 109, h: 77 },
         'score-area': { top: 10, left: 1436 },
-        'combo-area': { top: 686, left: 888, w: 99, h: 166 },
-        'streak-area': { top: 761, left: 891, w: 93, h: 57 },
+        'combo-area': { top: 694, left: 888, w: 99, h: 166 },
+        'streak-area': { top: 773, left: 891, w: 93, h: 57 },
         'log-container': { top: 110, left: 10, w: 360 }
     };
     LAYOUT_ITEMS.forEach(id => {
         const el = document.getElementById(id);
         if (!el || !preset[id]) return;
         el.style.position = 'absolute';
-        const maxTop = gh - 150 - (preset[id].h || 40);
-        el.style.top = Math.min(preset[id].top, maxTop) + 'px';
+        el.style.top = preset[id].top + 'px';
         el.style.left = Math.min(preset[id].left, gw - MARGIN) + 'px';
         el.style.right = 'auto';
         if (preset[id].w) el.style.width = preset[id].w + 'px';
