@@ -158,6 +158,7 @@ function startGame(mode) {
     resumeAudio();
     playGameStartSound();
     startGameLoop();
+    fitToScreen();
 }
 
 function getModeLabel() {
@@ -550,6 +551,7 @@ function goToTitle() {
     loadHighScore();
     applyLayout();
     document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected'));
+    fitToScreen();
 }
 
 function updateResultStats() {
@@ -735,6 +737,25 @@ function getGameState() {
     return gameState;
 }
 
+function fitToScreen() {
+    const container = document.getElementById('game-container');
+    const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    if (scale >= 1 || !document.getElementById('layout-editor').classList.contains('hidden')) {
+        container.style.transform = '';
+        container.style.position = '';
+        container.style.left = '';
+        container.style.top = '';
+        return;
+    }
+    container.style.transformOrigin = '0 0';
+    container.style.transform = 'scale(' + scale + ')';
+    container.style.position = 'absolute';
+    container.style.left = Math.round((window.innerWidth - 1920 * scale) / 2) + 'px';
+    container.style.top = Math.round((window.innerHeight - 1080 * scale) / 2) + 'px';
+}
+
+window.addEventListener('resize', fitToScreen);
+
 /* Layout editor */
 const LAYOUT_ITEMS = ['phase-area', 'score-area', 'combo-area', 'log-container', 'streak-area'];
 
@@ -742,6 +763,7 @@ function openLayoutEditor() {
     document.getElementById('settings-modal').classList.add('hidden');
     document.getElementById('pause-overlay').classList.add('hidden');
     document.getElementById('layout-editor').classList.remove('hidden');
+    fitToScreen();
 
     LAYOUT_ITEMS.forEach(id => {
         const el = document.getElementById(id);
@@ -770,6 +792,7 @@ function closeLayoutEditor() {
     } else if (gameState === 'start') {
         document.getElementById('settings-modal').classList.remove('hidden');
     }
+    fitToScreen();
 }
 
 function startDrag(e) {
@@ -960,6 +983,7 @@ document.getElementById('layout-close').addEventListener('click', () => { playCl
 
 loadHighScore();
 initAudio();
+fitToScreen();
 
 document.getElementById('bd-toggle').addEventListener('click', () => {
     const detail = document.getElementById('bd-detail');
