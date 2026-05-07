@@ -821,7 +821,7 @@ body.flash {
 }
 
 .start-tutorial {
-    font-size: 19px;
+    font-size: 21px;
     color: #555;
     line-height: 1.8;
     text-align: center;
@@ -1000,11 +1000,11 @@ body.flash {
 /* Settings */
 #settings-btn {
     position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 150px;
-    height: 75px;
-    font-size: 36px;
+    top: 120px;
+    right: 120px;
+    width: 100px;
+    height: 50px;
+    font-size: 28px;
     color: #888;
     cursor: pointer;
     transition: color 0.2s;
@@ -1012,8 +1012,11 @@ body.flash {
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 2px solid #4a4a6a;
+    border-radius: 10px;
+    background: rgba(40, 40, 70, 0.3);
 }
-#settings-btn:hover { color: #ccc; }
+#settings-btn:hover { color: #ccc; border-color: #6a6aaa; background: rgba(60, 60, 90, 0.4); }
 
 #settings-modal {
     position: absolute;
