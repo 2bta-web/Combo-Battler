@@ -32,6 +32,7 @@ function addLog(message) {
     const entry = document.createElement('div');
     entry.className = 'log-entry';
     entry.textContent = message;
+    if (log.style.fontSize) entry.style.fontSize = log.style.fontSize;
     log.appendChild(entry);
     logCount++;
     while (logCount > MAX_LOG_ENTRIES) {
