@@ -1286,36 +1286,6 @@ body.flash {
 .snap-guide.h { height: 1px; left: 0; right: 0; }
 .snap-guide.v { width: 1px; top: 0; bottom: 70px; }
 
-/* Portrait orientation warning */
-@media (orientation: portrait) {
-    body::after {
-        content: "";
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background: #1a1a2e;
-        z-index: 9999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        color: #fff;
-        text-align: center;
-        padding: 20px;
-        box-sizing: border-box;
-    }
-    body::before {
-        content: "端末を横向きにしてね";
-        position: fixed;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 10000;
-        color: #fff;
-        font-size: 24px;
-        text-align: center;
-    }
-}
-
 @media (max-height: 800px) {
     .start-title {
         font-size: 48px;
