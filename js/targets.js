@@ -2,6 +2,8 @@ const TARGET_LAYER = document.getElementById('target-layer');
 let activeTargets = [];
 let batchSpawnTotal = 0;
 let staggeredTimeouts = [];
+let batchIdCounter = 0;
+let currentBatchId = 0;
 let mouseX = 0, mouseY = 0;
 
 const TARGET_POSITIONS = [];
@@ -72,6 +74,7 @@ function spawnTarget(phase, isPlaying) {
     if (!isPlaying) return;
     staggeredTimeouts.forEach(clearTimeout);
     staggeredTimeouts = [];
+    currentBatchId = ++batchIdCounter;
     const count = getTargetCountForPhase(phase);
     const positions = getNonOverlappingPositions(count);
     const staggeredDelay = 600;
@@ -79,16 +82,17 @@ function spawnTarget(phase, isPlaying) {
     batchSpawnTotal = positions.length;
 
     positions.forEach((pos, i) => {
+        const batchId = currentBatchId;
         const tid = setTimeout(() => {
             if (window.getGameState && window.getGameState() === 'playing') {
-                createTarget(phase, pos);
+                createTarget(phase, pos, batchId);
             }
         }, i * staggeredDelay);
         staggeredTimeouts.push(tid);
     });
 }
 
-function createTarget(phase, position) {
+function createTarget(phase, position, batchId) {
     const targetSize = getTargetSizeForPhase(phase);
     const approachTime = getApproachTimeForPhase(phase);
 
@@ -121,7 +125,8 @@ function createTarget(phase, position) {
         el, approachTime, targetType,
         startTime: Date.now(),
         isClickable: false,
-        hit: false
+        hit: false,
+        batchId: batchId || 0
     };
 
     entry.clickableTimer = setTimeout(() => { entry.isClickable = true; }, 100);
@@ -223,8 +228,8 @@ function removeTarget(entry) {
     entry.removed = true;
     const idx = activeTargets.indexOf(entry);
     if (idx !== -1) activeTargets.splice(idx, 1);
-    if (activeTargets.length === 0 && batchSpawnTotal > 0 && window.onBatchComplete
-        && window.getGameState && window.getGameState() === 'playing') {
+    if (activeTargets.length === 0 && batchSpawnTotal > 0 && entry.batchId === currentBatchId
+        && window.onBatchComplete && window.getGameState && window.getGameState() === 'playing') {
         batchSpawnTotal = 0;
         window.onBatchComplete();
     }
