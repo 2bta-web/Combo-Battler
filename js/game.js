@@ -101,7 +101,10 @@ document.getElementById('settings-clear-data').addEventListener('click', () => {
     playWarningSound();
     showConfirmModal('ハイスコア・設定・レイアウトをすべて消去します。よろしいですか？', () => {
         showConfirmModal('本当に消去しますか？この操作は元に戻せません。', () => {
-            localStorage.clear();
+            localStorage.removeItem('comboBattlerVolume');
+            localStorage.removeItem('comboBattlerShake');
+            localStorage.removeItem('comboBattlerLayout');
+            Object.keys(localStorage).filter(k => k.startsWith('comboBattlerHS_')).forEach(k => localStorage.removeItem(k));
             location.reload();
         });
     });
