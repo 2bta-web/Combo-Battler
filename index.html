@@ -99,55 +99,66 @@
         <button id="mobile-pause-btn">⏸</button>
 
         <div id="result-screen" class="hidden">
-            <div class="result-title" id="result-title">ゲームオーバー</div>
-            <div class="result-mode">モード: <span id="result-mode-display">Standard</span></div>
-            <div class="result-score">最終スコア: <span id="final-score">0</span></div>
-            <div class="result-phase">到達フェーズ: <span id="final-phase">1</span></div>
-            <div class="result-newrecord hidden" id="new-record">★ ニューレコード! ★</div>
-            <div class="result-highscore">ハイスコア: <span id="highscore-value">0</span></div>
-            <div class="result-playtime">プレイ時間: <span id="playtime-value">00:00</span></div>
+            <div class="result-header">
+                <div class="result-title" id="result-title">ゲームオーバー</div>
+                <div class="result-newrecord hidden" id="new-record">★ ニューレコード!</div>
+            </div>
+            <div class="result-meta">
+                <span>モード: <span id="result-mode-display">Standard</span></span>
+                <span class="meta-sep">|</span>
+                <span>フェーズ <span id="final-phase">1 / 10</span></span>
+                <span class="meta-sep">|</span>
+                <span id="playtime-value">00:00</span>
+            </div>
+            <div class="result-scores">
+                <div class="final-score" id="final-score">0</div>
+                <div class="hs-label">ハイスコア: <span id="highscore-value">0</span></div>
+            </div>
             <div class="result-breakdown" id="result-breakdown">
                 <div class="result-bd-row">合計ダメ: <span id="bd-damage-total">0</span></div>
-                <div class="result-bd-row">合計スコア: <span id="bd-score-total">0</span></div>
                 <div class="result-bd-toggle" id="bd-toggle">[詳細▼]</div>
                 <div id="bd-detail" class="hidden">
                     <div class="bd-section-title">ダメージ内訳</div>
-                    <div class="bd-row">基本: <span id="bd-base">0</span></div>
-                    <div class="bd-row">クリティカル: <span id="bd-crit">0</span></div>
-                    <div class="bd-row">連撃: <span id="bd-ds">0</span></div>
-                    <div class="bd-row">エコー: <span id="bd-echo">0</span></div>
-                    <div class="bd-row">ラッキー: <span id="bd-lucky">0</span></div>
-                    <div class="bd-row">ストリーク: <span id="bd-streak">0</span></div>
+                    <div class="bd-grid">
+                        <span>基本: <span id="bd-base">0</span></span>
+                        <span>クリティカル: <span id="bd-crit">0</span></span>
+                        <span>連撃: <span id="bd-ds">0</span></span>
+                        <span>エコー: <span id="bd-echo">0</span></span>
+                        <span>ラッキー: <span id="bd-lucky">0</span></span>
+                        <span>ストリーク: <span id="bd-streak">0</span></span>
+                    </div>
                     <div class="bd-section-title">スコア内訳</div>
-                    <div class="bd-row">与ダメスコア: <span id="bd-damage">0</span></div>
-                    <div class="bd-row">フィーバー加点: <span id="bd-fever">0</span></div>
-                    <div class="bd-row">チェイン: <span id="bd-chain">0</span></div>
-                    <div class="bd-row">吸収: <span id="bd-absorb">0</span></div>
-                    <div class="bd-row">フィニッシャー: <span id="bd-finisher">0</span></div>
+                    <div class="bd-grid">
+                        <span>与ダメ: <span id="bd-damage">0</span></span>
+                        <span>フィーバー: <span id="bd-fever">0</span></span>
+                        <span>チェイン: <span id="bd-chain">0</span></span>
+                        <span>吸収: <span id="bd-absorb">0</span></span>
+                        <span>フィニッシャー: <span id="bd-finisher">0</span></span>
+                    </div>
                 </div>
             </div>
-            <div class="result-stats">
-                <div>Perfect: <span id="stat-perfect">0</span></div>
-                <div>Good: <span id="stat-good">0</span></div>
-                <div>OK: <span id="stat-ok">0</span></div>
-                <div>Miss: <span id="stat-miss">0</span></div>
-                <div>Early: <span id="stat-early">0</span></div>
-                <div>最大コンボ: <span id="stat-maxcombo">0</span></div>
-                <div>精度: <span id="stat-accuracy">-</span></div>
-            </div>
-            <div class="result-targets">
-                <div>🟦青: <span id="stat-blue">0</span></div>
-                <div>🟪紫: <span id="stat-purple">0</span></div>
-                <div>🟨金: <span id="stat-gold">0</span></div>
-                <div>🟥赤: <span id="stat-red">0</span></div>
+            <div class="result-stats-grid">
+                <span>Perfect: <span id="stat-perfect">0</span></span>
+                <span>Good: <span id="stat-good">0</span></span>
+                <span>OK: <span id="stat-ok">0</span></span>
+                <span>Miss: <span id="stat-miss">0</span></span>
+                <span>Early: <span id="stat-early">0</span></span>
+                <span>精度: <span id="stat-accuracy">-</span></span>
+                <span>最大コンボ: <span id="stat-maxcombo">0</span></span>
+                <span>🟦青: <span id="stat-blue">0</span></span>
+                <span>🟪紫: <span id="stat-purple">0</span></span>
+                <span>🟨金: <span id="stat-gold">0</span></span>
+                <span>🟥赤: <span id="stat-red">0</span></span>
             </div>
             <div class="result-upgrades">
                 <div class="result-section-title">取得強化</div>
                 <div id="result-upgrade-list"></div>
             </div>
-            <button id="restart-btn">もう一度</button>
-            <button id="title-btn">タイトルに戻る</button>
-            <button id="tweet-btn">スコアを共有</button>
+            <div class="result-buttons">
+                <button id="restart-btn">もう一度</button>
+                <button id="tweet-btn">X(旧Twitter)で共有</button>
+                <button id="title-btn">タイトルに戻る</button>
+            </div>
         </div>
 
         <div id="start-screen">

@@ -48,7 +48,7 @@ function shareTweet() {
     const score = getScore().toLocaleString();
     const mode = getModeLabel();
     const phase = getPhase();
-    const text = `コンボローグストライク\n${mode} モード ${score}点！\n到達フェーズ: ${phase}\n\n`;
+    const text = `コンボローグストライク\n${mode} モード ${score}点！\n到達フェーズ: ${phase}\n\n#コンボローグストライク`;
     const url = 'https://2bta-web.github.io/Combo-Battler/';
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
 }
@@ -674,10 +674,12 @@ function gameComplete() {
 
     playGameClearSound();
 
+    const maxPhase2 = getMaxPhase();
+
     document.getElementById('result-title').textContent = 'ゲームクリア！';
     document.getElementById('result-mode-display').textContent = getModeLabel();
     document.getElementById('final-score').textContent = finalScore.toLocaleString();
-    document.getElementById('final-phase').textContent = getPhase();
+    document.getElementById('final-phase').textContent = `${getPhase()} / ${maxPhase2}`;
 
     const newRecordEl = document.getElementById('new-record');
     if (newRecordEl) newRecordEl.classList.toggle('hidden', !isNewRecord);
