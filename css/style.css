@@ -1065,11 +1065,11 @@ body.flash {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #4a4a6a;
+    border: 2px solid #888;
     border-radius: 10px;
     background: rgba(40, 40, 70, 0.3);
 }
-#settings-btn:hover { color: #ccc; border-color: #6a6aaa; background: rgba(60, 60, 90, 0.4); }
+#settings-btn:hover { color: #ccc; border-color: #ccc; background: rgba(60, 60, 90, 0.4); }
 
 #settings-modal {
     position: absolute;
@@ -1370,12 +1370,12 @@ body.flash {
 
 #ranking-btn, #stats-btn, #achievements-btn {
     position: absolute;
-    width: 150px;
-    height: 45px;
-    font-size: 18px;
+    width: 170px;
+    height: 55px;
+    font-size: 22px;
     color: #88aaff;
     background: rgba(40, 40, 70, 0.3);
-    border: 2px solid #4a4a6a;
+    border: 2px solid #88aaff;
     border-radius: 10px;
     cursor: pointer;
     z-index: 500;
@@ -1384,8 +1384,8 @@ body.flash {
 }
 #ranking-btn, #stats-btn, #achievements-btn:hover { color: #fff; border-color: #88aaff; background: rgba(60, 60, 100, 0.4); }
 #ranking-btn { top: 120px; }
-#stats-btn { top: 180px; }
-#achievements-btn { top: 240px; }
+#stats-btn { top: 190px; }
+#achievements-btn { top: 260px; }
 
 #ranking-modal {
     position: absolute;
@@ -1442,7 +1442,7 @@ body.flash {
 
 #tutorial-btn {
     position: absolute;
-    top: 280px;
+    top: 210px;
     right: 170px;
     width: 170px;
     height: 55px;
@@ -1450,13 +1450,17 @@ body.flash {
     padding: 0;
     color: #88aaff;
     background: rgba(40, 40, 70, 0.3);
-    border: 2px solid #4a4a6a;
+    border: 2px solid #88aaff;
     border-radius: 10px;
     cursor: pointer;
     z-index: 500;
     transition: all 0.2s;
 }
 #tutorial-btn:hover { color: #fff; border-color: #88aaff; background: rgba(60, 60, 100, 0.4); }
+#tutorial-btn.tutorial-new {
+    animation: tutorialGlow 1.5s ease infinite alternate;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4), 0 0 30px rgba(255, 215, 0, 0.15);
+}
 
 #tutorial-modal {
     position: absolute;
@@ -1484,11 +1488,6 @@ body.flash {
 #tutorial-close { display: block; margin: 15px auto 0; padding: 8px 30px; font-size: 14px; color: #fff; background: #4a4aaa; border: none; border-radius: 5px; cursor: pointer; }
 #tutorial-close:hover { background: #5a5aba; }
 
-.tutorial-new {
-    animation: tutorialGlow 1.5s ease infinite alternate;
-    border-color: #ffd700 !important;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4), 0 0 30px rgba(255, 215, 0, 0.15);
-}
 @keyframes tutorialGlow {
     from { box-shadow: 0 0 8px rgba(255, 215, 0, 0.3); }
     to { box-shadow: 0 0 20px rgba(255, 215, 0, 0.6), 0 0 40px rgba(255, 215, 0, 0.2); }
@@ -1520,22 +1519,21 @@ body.flash {
 .ach-entry.locked .ach-icon { color: #444; }
 
 .ach-popup {
-    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    position: fixed; bottom: 40px; right: 40px;
     background: rgba(25, 25, 45, 0.95);
     border: 2px solid #ffd700;
     border-radius: 12px;
-    padding: 20px 30px;
+    padding: 16px 24px;
     z-index: 9999;
     text-align: center;
     animation: achPopupAnim 2s ease forwards;
     pointer-events: none;
 }
-.ach-popup .achp-title { font-size: 14px; color: #ffd700; letter-spacing: 2px; }
-.ach-popup .achp-name { font-size: 24px; color: #fff; font-weight: bold; margin-top: 4px; }
+.ach-popup .achp-title { font-size: 13px; color: #ffd700; letter-spacing: 2px; }
+.ach-popup .achp-name { font-size: 20px; color: #fff; font-weight: bold; margin-top: 2px; }
 @keyframes achPopupAnim {
-    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
-    15% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
-    30% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8) translateY(-30px); }
+    0% { opacity: 0; transform: translateX(30px); }
+    15% { opacity: 1; transform: translateX(0); }
+    80% { opacity: 1; transform: translateX(0); }
+    100% { opacity: 0; transform: translateX(30px); }
 }
