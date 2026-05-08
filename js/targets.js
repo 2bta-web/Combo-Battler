@@ -219,6 +219,8 @@ function showJudgmentText(judgment, x, y) {
 }
 
 function removeTarget(entry) {
+    if (entry.removed) return;
+    entry.removed = true;
     const idx = activeTargets.indexOf(entry);
     if (idx !== -1) activeTargets.splice(idx, 1);
     if (activeTargets.length === 0 && batchSpawnTotal > 0 && window.onBatchComplete) {
@@ -231,6 +233,7 @@ function clearTargets() {
     staggeredTimeouts.forEach(clearTimeout);
     staggeredTimeouts = [];
     activeTargets.forEach(e => {
+        e.removed = true;
         if (e.timeout) clearTimeout(e.timeout);
         if (e.clickableTimer) clearTimeout(e.clickableTimer);
         e.el.remove();
