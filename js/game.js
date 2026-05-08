@@ -748,12 +748,18 @@ function getGameState() {
 }
 
 /* Layout editor */
-const LAYOUT_ITEMS = ['phase-area', 'score-area', 'combo-area', 'log-container', 'streak-area'];
+const LAYOUT_ITEMS = ['phase-area', 'score-area', 'combo-area', 'log-container', 'streak-area', 'fever-timer'];
 
 function openLayoutEditor() {
     document.getElementById('settings-modal').classList.add('hidden');
     document.getElementById('pause-overlay').classList.add('hidden');
     document.getElementById('layout-editor').classList.remove('hidden');
+
+    const ft = document.getElementById('fever-timer');
+    ft.dataset.wasHidden = ft.classList.contains('hidden');
+    ft.classList.remove('hidden');
+    ft.textContent = 'FEVER 30s';
+    ft.style.color = '#ffd700';
 
     LAYOUT_ITEMS.forEach(id => {
         const el = document.getElementById(id);
@@ -777,6 +783,9 @@ function closeLayoutEditor() {
         el.classList.remove('editing');
         el.querySelector('.resize-handle')?.remove();
     });
+    const ft = document.getElementById('fever-timer');
+    if (ft.dataset.wasHidden === 'true') ft.classList.add('hidden');
+    delete ft.dataset.wasHidden;
     if (gameState === 'paused') {
         document.getElementById('pause-overlay').classList.remove('hidden');
     } else if (gameState === 'start') {
@@ -987,7 +996,8 @@ function applyPreset() {
         'score-area': { top: 10, left: 1436 },
         'combo-area': { top: 694, left: 888, w: 99, h: 166 },
         'streak-area': { top: 773, left: 891, w: 93, h: 57 },
-        'log-container': { top: 110, left: 10, w: 360 }
+        'log-container': { top: 110, left: 10, w: 360 },
+        'fever-timer': { top: 780, left: 1770 }
     };
     LAYOUT_ITEMS.forEach(id => {
         const el = document.getElementById(id);
