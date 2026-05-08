@@ -1004,8 +1004,7 @@ function applyPreset() {
         'score-area': { top: 10, left: 1436 },
         'combo-area': { top: 694, left: 888, w: 99, h: 166 },
         'streak-area': { top: 773, left: 891, w: 93, h: 57 },
-        'log-container': { top: 110, left: 10, w: 360 },
-        'fever-timer': { top: 900, left: 1770 }
+        'log-container': { top: 110, left: 10, w: 360 }
     };
     LAYOUT_ITEMS.forEach(id => {
         const el = document.getElementById(id);
