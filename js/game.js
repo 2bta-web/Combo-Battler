@@ -855,9 +855,9 @@ async function submitScore(score, mode, phase) {
     const playTime = Math.floor((Date.now() - startTime) / 1000);
     const devId = getDeviceId();
     try {
-        await fetch(SB_URL + '?on_conflict=device_id,mode', {
+        await fetch(SB_URL, {
             method: 'POST',
-            headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates' },
+            headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' },
             body: JSON.stringify({ score, mode, phase, player_name: name, play_time: playTime, device_id: devId })
         });
     } catch(e) {}
