@@ -862,14 +862,14 @@ body.flash {
 }
 
 .mode-btn-name {
-    font-size: 20px;
+    font-size: 28px;
     font-weight: bold;
     color: #e0e0ff;
     margin-bottom: 6px;
 }
 
 .mode-btn-desc {
-    font-size: 12px;
+    font-size: 17px;
     color: #888;
 }
 
