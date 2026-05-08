@@ -1368,14 +1368,11 @@ body.flash {
     }
 }
 
-#ranking-btn {
+#ranking-btn, #stats-btn, #achievements-btn {
     position: absolute;
-    top: 210px;
-    right: 170px;
-    width: 170px;
-    height: 55px;
-    font-size: 22px;
-    padding: 0;
+    width: 150px;
+    height: 45px;
+    font-size: 18px;
     color: #88aaff;
     background: rgba(40, 40, 70, 0.3);
     border: 2px solid #4a4a6a;
@@ -1383,8 +1380,12 @@ body.flash {
     cursor: pointer;
     z-index: 500;
     transition: all 0.2s;
+    left: 170px;
 }
-#ranking-btn:hover { color: #fff; border-color: #88aaff; background: rgba(60, 60, 100, 0.4); }
+#ranking-btn, #stats-btn, #achievements-btn:hover { color: #fff; border-color: #88aaff; background: rgba(60, 60, 100, 0.4); }
+#ranking-btn { top: 120px; }
+#stats-btn { top: 180px; }
+#achievements-btn { top: 240px; }
 
 #ranking-modal {
     position: absolute;
@@ -1491,4 +1492,50 @@ body.flash {
 @keyframes tutorialGlow {
     from { box-shadow: 0 0 8px rgba(255, 215, 0, 0.3); }
     to { box-shadow: 0 0 20px rgba(255, 215, 0, 0.6), 0 0 40px rgba(255, 215, 0, 0.2); }
+}
+
+#stats-modal, #achievements-modal {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(25, 25, 45, 0.98);
+    border: 2px solid #5a5a8a;
+    border-radius: 10px;
+    padding: 25px;
+    min-width: 300px;
+    z-index: 500;
+}
+#stats-modal.hidden, #achievements-modal.hidden { display: none; }
+.stats-title, .achievements-title { font-size: 22px; font-weight: bold; color: #fff; text-align: center; margin-bottom: 14px; }
+.stats-body { font-size: 16px; color: #ccc; line-height: 2; }
+.stat-row span { color: #ffd700; font-weight: bold; }
+#stats-close, #achievements-close { display: block; margin: 15px auto 0; padding: 8px 30px; font-size: 14px; color: #fff; background: #4a4aaa; border: none; border-radius: 5px; cursor: pointer; }
+#stats-close:hover, #achievements-close:hover { background: #5a5aba; }
+
+#achievements-list { font-size: 15px; color: #aaa; line-height: 2; max-height: 300px; overflow-y: auto; }
+.ach-entry { display: flex; align-items: center; gap: 8px; }
+.ach-entry .ach-icon { width: 20px; text-align: center; }
+.ach-entry .ach-name { flex: 1; }
+.ach-entry.locked { color: #555; }
+.ach-entry.locked .ach-icon { color: #444; }
+
+.ach-popup {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: rgba(25, 25, 45, 0.95);
+    border: 2px solid #ffd700;
+    border-radius: 12px;
+    padding: 20px 30px;
+    z-index: 9999;
+    text-align: center;
+    animation: achPopupAnim 2s ease forwards;
+    pointer-events: none;
+}
+.ach-popup .achp-title { font-size: 14px; color: #ffd700; letter-spacing: 2px; }
+.ach-popup .achp-name { font-size: 24px; color: #fff; font-weight: bold; margin-top: 4px; }
+@keyframes achPopupAnim {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    15% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+    30% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8) translateY(-30px); }
 }

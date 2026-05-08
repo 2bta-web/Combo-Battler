@@ -173,8 +173,10 @@
         </div>
 
         <div id="start-screen">
-            <div id="settings-btn">設定</div>
             <button id="ranking-btn">ランキング</button>
+            <button id="stats-btn">累計統計</button>
+            <button id="achievements-btn">実績</button>
+            <div id="settings-btn">設定</div>
             <button id="tutorial-btn">チュートリアル</button>
             <div class="start-title">コンボローグストライク</div>
             <div class="start-subtitle">タイミングよく撃て！</div>
@@ -271,6 +273,25 @@
                 <button id="layout-reset">リセット</button>
                 <button id="layout-close">戻る</button>
             </div>
+        </div>
+
+        <div id="stats-modal" class="hidden">
+            <div class="stats-title">累計統計</div>
+            <div class="stats-body">
+                <div class="stat-row">総プレイ回数: <span id="stat-plays">0</span></div>
+                <div class="stat-row">総ヒット数: <span id="stat-totalhits">0</span></div>
+                <div class="stat-row">総スコア: <span id="stat-totalscore">0</span></div>
+                <div class="stat-row">総プレイ時間: <span id="stat-totaltime">00:00</span></div>
+                <div class="stat-row">最高コンボ: <span id="stat-bestcombo">0</span></div>
+                <div class="stat-row">最高ストリーク: <span id="stat-beststreak">0</span></div>
+            </div>
+            <button id="stats-close">閉じる</button>
+        </div>
+
+        <div id="achievements-modal" class="hidden">
+            <div class="achievements-title">実績</div>
+            <div id="achievements-list"></div>
+            <button id="achievements-close">閉じる</button>
         </div>
 
         <div id="confirm-modal" class="hidden">

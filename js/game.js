@@ -101,6 +101,14 @@ document.addEventListener('keydown', (e) => {
             document.getElementById('tutorial-modal').classList.add('hidden');
             return;
         }
+        if (!document.getElementById('stats-modal').classList.contains('hidden')) {
+            document.getElementById('stats-modal').classList.add('hidden');
+            return;
+        }
+        if (!document.getElementById('achievements-modal').classList.contains('hidden')) {
+            document.getElementById('achievements-modal').classList.add('hidden');
+            return;
+        }
         if (gameState === 'playing' || gameState === 'phaseTransition') pauseGame();
         else if (gameState === 'paused') resumeGame();
     }
@@ -170,6 +178,24 @@ document.getElementById('tutorial-btn').addEventListener('click', () => {
 document.getElementById('tutorial-close').addEventListener('click', () => {
     playCloseSound();
     document.getElementById('tutorial-modal').classList.add('hidden');
+});
+document.getElementById('stats-btn').addEventListener('click', () => {
+    playOpenSound();
+    loadStats();
+    document.getElementById('stats-modal').classList.remove('hidden');
+});
+document.getElementById('stats-close').addEventListener('click', () => {
+    playCloseSound();
+    document.getElementById('stats-modal').classList.add('hidden');
+});
+document.getElementById('achievements-btn').addEventListener('click', () => {
+    playOpenSound();
+    loadAchievements();
+    document.getElementById('achievements-modal').classList.remove('hidden');
+});
+document.getElementById('achievements-close').addEventListener('click', () => {
+    playCloseSound();
+    document.getElementById('achievements-modal').classList.add('hidden');
 });
 document.getElementById('ranking-submit-btn').addEventListener('click', async () => {
     const btn = document.getElementById('ranking-submit-btn');
@@ -260,6 +286,107 @@ function escHtml(s) {
     return d.innerHTML;
 }
 
+// 実績定義
+const ACHIEVEMENTS = [
+    { id: 1, name: '初プレイ', desc: 'ゲームを1回プレイ', check: s => s.plays >= 1 },
+    { id: 2, name: 'コンボ10', desc: 'コンボ10達成', check: s => s.bestCombo >= 10 },
+    { id: 3, name: 'コンボ50', desc: 'コンボ50達成', check: s => s.bestCombo >= 50 },
+    { id: 4, name: 'コンボ100', desc: 'コンボ100達成', check: s => s.bestCombo >= 100 },
+    { id: 5, name: 'ストリーク10', desc: 'Perfectストリーク10達成', check: s => s.bestStreak >= 10 },
+    { id: 6, name: 'ストリーク30', desc: 'Perfectストリーク30達成', check: s => s.bestStreak >= 30 },
+    { id: 7, name: 'FEVER!', desc: '初めてFEVER発動', check: s => s.feverCount >= 1 },
+    { id: 8, name: 'ボス撃破', desc: '初めてボスを倒す', check: s => s.bossDefeats >= 1 },
+    { id: 9, name: 'Standardクリア', desc: 'Standardモードクリア', check: s => s.clearStandard },
+    { id: 10, name: 'Hardクリア', desc: 'Hardモードクリア', check: s => s.clearHard },
+    { id: 11, name: 'スコア10000', desc: '1回のプレイで10000点達成', check: s => s.maxScore >= 10000 },
+    { id: 12, name: 'スコア50000', desc: '1回のプレイで50000点達成', check: s => s.maxScore >= 50000 },
+    { id: 13, name: '全モードクリア', desc: 'Standard + Hard両方クリア', check: s => s.clearStandard && s.clearHard },
+    { id: 14, name: '強化コレクター', desc: '15種全ての強化を獲得', check: s => s.allUpgrades },
+    { id: 15, name: 'パーフェクトラウンド', desc: '1フェーズを全Perfectでクリア', check: s => s.perfectRound >= 1 },
+];
+
+function getStats() {
+    try { return JSON.parse(localStorage.getItem('comboBattlerStats')) || {}; } catch(e) { return {}; }
+}
+function saveStats(s) { try { localStorage.setItem('comboBattlerStats', JSON.stringify(s)); } catch(e) {} }
+
+function updateStatsPlay() {
+    const s = getStats();
+    s.plays = (s.plays || 0) + 1;
+    saveStats(s);
+}
+
+function updateStatsHits(hits, combo, streak) {
+    const s = getStats();
+    s.totalHits = (s.totalHits || 0) + hits;
+    s.bestCombo = Math.max(s.bestCombo || 0, combo);
+    s.bestStreak = Math.max(s.bestStreak || 0, streak);
+    saveStats(s);
+}
+
+function updateStatsEnd(score, mode, time) {
+    const s = getStats();
+    s.totalScore = (s.totalScore || 0) + score;
+    s.totalTime = (s.totalTime || 0) + time;
+    s.maxScore = Math.max(s.maxScore || 0, score);
+    if (mode === 'standard' && window.gameCleared) s.clearStandard = true;
+    if (mode === 'hard' && window.gameCleared) s.clearHard = true;
+    const runUps = getRunUpgrades ? getRunUpgrades() : [];
+    let allIds = new Set(s.collectedUpgrades || []);
+    const idMap = { '攻撃力UP':1,'クリティカル':2,'コンボ倍率UP':3,'ターゲット拡大':4,'余裕UP':5,'スコアブースト':6,'コンボセーフ':7,'チェイン':8,'ラッキー':9,'フィニッシャー':10,'連撃':11,'吸収':12,'エコー':13,'障壁':14,'オーラ':15 };
+    runUps.forEach(name => { const id = idMap[name]; if (id) allIds.add(id); });
+    s.collectedUpgrades = [...allIds];
+    s.allUpgrades = allIds.size >= 15;
+    saveStats(s);
+    checkAchievements();
+}
+
+function checkAchievements() {
+    const stats = getStats();
+    let unlocked = {};
+    try { unlocked = JSON.parse(localStorage.getItem('comboBattlerAchievements')) || {}; } catch(e) {}
+    ACHIEVEMENTS.forEach(a => {
+        if (!unlocked[a.id] && a.check(stats)) {
+            unlocked[a.id] = true;
+            showAchievementPopup(a.name);
+        }
+    });
+    try { localStorage.setItem('comboBattlerAchievements', JSON.stringify(unlocked)); } catch(e) {}
+}
+
+function showAchievementPopup(name) {
+    const popup = document.createElement('div');
+    popup.className = 'ach-popup';
+    popup.innerHTML = '<div class="achp-title">実績解除!</div><div class="achp-name">' + escHtml(name) + '</div>';
+    document.body.appendChild(popup);
+    setTimeout(() => popup.remove(), 2100);
+}
+
+function loadStats() {
+    const s = getStats();
+    document.getElementById('stat-plays').textContent = s.plays || 0;
+    document.getElementById('stat-totalhits').textContent = (s.totalHits || 0).toLocaleString();
+    document.getElementById('stat-totalscore').textContent = (s.totalScore || 0).toLocaleString();
+    const mins = Math.floor((s.totalTime || 0) / 60);
+    const secs = (s.totalTime || 0) % 60;
+    document.getElementById('stat-totaltime').textContent = mins + '分' + secs + '秒';
+    document.getElementById('stat-bestcombo').textContent = s.bestCombo || 0;
+    document.getElementById('stat-beststreak').textContent = s.bestStreak || 0;
+}
+
+function loadAchievements() {
+    const list = document.getElementById('achievements-list');
+    let unlocked = {};
+    try { unlocked = JSON.parse(localStorage.getItem('comboBattlerAchievements')) || {}; } catch(e) {}
+    list.innerHTML = '';
+    ACHIEVEMENTS.forEach(a => {
+        const d = document.createElement('div');
+        d.className = 'ach-entry' + (unlocked[a.id] ? '' : ' locked');
+        d.innerHTML = '<span class="ach-icon">' + (unlocked[a.id] ? '★' : '☆') + '</span><span class="ach-name">' + escHtml(a.name) + '</span><span class="ach-desc" style="color:#666;font-size:13px;">' + escHtml(a.desc) + '</span>';
+        list.appendChild(d);
+    });
+}
+
 // Pause tabs
 document.querySelectorAll('.pause-tab').forEach(tab => {
     tab.addEventListener('click', () => {
@@ -297,6 +424,7 @@ START_SCREEN.addEventListener('click', (e) => {
 
 function startGame(mode) {
     window.gameMode = mode;
+    window.gameCleared = false;
     startTime = Date.now();
     gameState = 'playing';
     START_SCREEN.classList.add('hidden');
@@ -311,6 +439,7 @@ function startGame(mode) {
     addLog(`【${getModeLabel()}】開始！`);
     resumeAudio();
     playGameStartSound();
+    updateStatsPlay();
     startGameLoop();
 }
 
@@ -552,6 +681,9 @@ window.onTargetHit = function(judgment, targetType) {
 
     if (combo === 15 && canStartFever()) {
         activateFever();
+        const st = getStats();
+        st.feverCount = (st.feverCount || 0) + 1;
+        saveStats(st);
         playFeverSound();
         addLog('🔥 FEVER! 30秒間スコア2倍');
     }
@@ -606,6 +738,7 @@ window.onTargetHit = function(judgment, targetType) {
     if (getEnemyHPPercent() <= 0) {
         enemyDefeated();
     }
+    updateStatsHits(1, getCombo(), getPerfectStreak());
 };
 
 window.onTargetMiss = function() {
@@ -673,6 +806,9 @@ function enemyDefeated() {
     }
 
     if (isBoss) {
+        const st2 = getStats();
+        st2.bossDefeats = (st2.bossDefeats || 0) + 1;
+        saveStats(st2);
         showText('ボス撃破! 2つ選べ');
         phaseTransitionTimer = setTimeout(() => showBossChoices(), 800);
     } else if (shouldOfferUpgrade()) {
@@ -840,11 +976,14 @@ function retireGame(title) {
     document.getElementById('fever-timer').classList.add('hidden');
     addLog(`リタイア 最終スコア: ${finalScore.toLocaleString()}`);
     showResultRanking(finalScore, window.gameMode);
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    updateStatsEnd(finalScore, window.gameMode, elapsed);
 }
 
 function gameComplete() {
     gameState = 'result';
     isPausing = false;
+    window.gameCleared = true;
     if (phaseTransitionTimer) { clearTimeout(phaseTransitionTimer); phaseTransitionTimer = null; }
     const finalScore = getScore();
     const isNewRecord = saveHighScore(finalScore);
@@ -868,6 +1007,8 @@ function gameComplete() {
     document.getElementById('fever-timer').classList.add('hidden');
     addLog(`ゲームクリア！最終スコア: ${finalScore.toLocaleString()}`);
     showResultRanking(finalScore, window.gameMode);
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    updateStatsEnd(finalScore, window.gameMode, elapsed);
 }
 
 function loadHighScore() {
