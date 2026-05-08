@@ -84,7 +84,7 @@ function spawnTarget(phase, isPlaying) {
     positions.forEach((pos, i) => {
         const batchId = currentBatchId;
         const tid = setTimeout(() => {
-            if (window.getGameState && window.getGameState() === 'playing') {
+            if (window.getGameState && window.getGameState() === 'playing' && batchId === currentBatchId) {
                 createTarget(phase, pos, batchId);
             }
         }, i * staggeredDelay);

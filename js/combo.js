@@ -258,7 +258,7 @@ function getActiveUpgrades() {
         if (id === 8) return b.chain > 0;
         if (id === 9) return b.lucky > 0;
         if (id === 12) return b.absorb > 0;
-        if (id === 13) return b.echo >= 0.30;
+        if (id === 13) return b.echo >= 0.40;
         return false;
     }
     if (b.attackUp > 0) list.push(`攻撃力UP +${Math.round(b.attackUp * 100)}%`);
