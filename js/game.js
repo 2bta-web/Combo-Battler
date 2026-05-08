@@ -763,10 +763,10 @@ function openLayoutEditor() {
     const ftStyle = getComputedStyle(ft);
     const ftB = parseFloat(ftStyle.bottom);
     if (!isNaN(ftB)) ft.style.top = (window.innerHeight - ftB - ft.offsetHeight) + 'px';
-    ft.style.bottom = '';
+    ft.style.bottom = 'auto';
     const ftR = parseFloat(ftStyle.right);
     if (!isNaN(ftR)) ft.style.left = (window.innerWidth - ftR - ft.offsetWidth) + 'px';
-    ft.style.right = '';
+    ft.style.right = 'auto';
 
     LAYOUT_ITEMS.forEach(id => {
         const el = document.getElementById(id);
@@ -850,6 +850,7 @@ function startDrag(e) {
         item.style.left = snap.x + 'px';
         item.style.top = snap.y + 'px';
         item.style.right = 'auto';
+        item.style.bottom = 'auto';
         snap.guides.forEach(g => {
             const guide = document.createElement('div');
             guide.className = 'snap-guide ' + g.type;
