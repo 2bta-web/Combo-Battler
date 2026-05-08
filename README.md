@@ -2,7 +2,7 @@
 
 OSU風ターゲットをタイミングよく撃ち抜け！コンボを繋いで15種の強化を駆使し、敵を倒すコンボアクション×ローグライトゲーム。
 
-**プレイはこちら** → https://xiaolincangkong5-web.github.io/Combo-Battler/
+**プレイはこちら** → https://2bta-web.github.io/Combo-Battler/
 
 ## 操作
 
