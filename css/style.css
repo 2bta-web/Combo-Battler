@@ -662,10 +662,6 @@ body.flash {
     color: #ffd700;
     font-weight: bold;
 }
-#stat-maxstreak {
-    color: #aaa;
-    font-weight: normal;
-}
 
 .result-upgrades {
     margin: 8px 0 12px;
