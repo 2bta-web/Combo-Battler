@@ -760,16 +760,13 @@ function openLayoutEditor() {
     ft.classList.remove('hidden');
     document.getElementById('fever-timer-text').textContent = 'FEVER 30s';
     ft.style.color = '#ffd700';
-    if (ft.style.bottom && ft.style.bottom !== 'auto') {
-        const b = parseFloat(ft.style.bottom);
-        if (!isNaN(b)) ft.style.top = (window.innerHeight - b - ft.offsetHeight) + 'px';
-        ft.style.bottom = '';
-    }
-    if (ft.style.right && ft.style.right !== 'auto') {
-        const r = parseFloat(ft.style.right);
-        if (!isNaN(r)) ft.style.left = (window.innerWidth - r - ft.offsetWidth) + 'px';
-        ft.style.right = '';
-    }
+    const ftStyle = getComputedStyle(ft);
+    const ftB = parseFloat(ftStyle.bottom);
+    if (!isNaN(ftB)) ft.style.top = (window.innerHeight - ftB - ft.offsetHeight) + 'px';
+    ft.style.bottom = '';
+    const ftR = parseFloat(ftStyle.right);
+    if (!isNaN(ftR)) ft.style.left = (window.innerWidth - ftR - ft.offsetWidth) + 'px';
+    ft.style.right = '';
 
     LAYOUT_ITEMS.forEach(id => {
         const el = document.getElementById(id);
@@ -1007,7 +1004,7 @@ function applyPreset() {
         'combo-area': { top: 694, left: 888, w: 99, h: 166 },
         'streak-area': { top: 773, left: 891, w: 93, h: 57 },
         'log-container': { top: 110, left: 10, w: 360 },
-        'fever-timer': { top: 780, left: 1770 }
+        'fever-timer': { top: 900, left: 1770 }
     };
     LAYOUT_ITEMS.forEach(id => {
         const el = document.getElementById(id);
