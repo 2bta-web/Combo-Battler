@@ -223,7 +223,8 @@ function removeTarget(entry) {
     entry.removed = true;
     const idx = activeTargets.indexOf(entry);
     if (idx !== -1) activeTargets.splice(idx, 1);
-    if (activeTargets.length === 0 && batchSpawnTotal > 0 && window.onBatchComplete) {
+    if (activeTargets.length === 0 && batchSpawnTotal > 0 && window.onBatchComplete
+        && window.getGameState && window.getGameState() === 'playing') {
         batchSpawnTotal = 0;
         window.onBatchComplete();
     }
