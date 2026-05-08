@@ -269,7 +269,14 @@ function resumeGame() {
     isPausing = false;
     gameState = window.wasChoiceOpen ? 'phaseTransition' : 'playing';
     if (window.wasChoiceOpen) {
-        document.getElementById('choice-modal').classList.remove('hidden');
+        const optionsEl = document.getElementById('choice-options');
+        if (!optionsEl || optionsEl.children.length === 0) {
+            const phase = getPhase();
+            if (isBossPhase(phase)) showBossChoices();
+            else showChoices();
+        } else {
+            document.getElementById('choice-modal').classList.remove('hidden');
+        }
     }
     window.wasChoiceOpen = false;
     resumeTargets();
