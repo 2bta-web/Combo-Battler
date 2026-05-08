@@ -128,7 +128,7 @@ document.getElementById('settings-btn').addEventListener('click', () => {
 document.getElementById('settings-close').addEventListener('click', () => { playCloseSound(); SETTINGS_MODAL.classList.add('hidden'); });
 document.getElementById('settings-clear-data').addEventListener('click', () => {
     playWarningSound();
-    showConfirmModal('ハイスコア・設定・レイアウトをすべて消去します。よろしいですか？', () => {
+    showConfirmModal('ハイスコア・累計統計・実績・設定・レイアウトをすべて消去します。よろしいですか？', () => {
         showConfirmModal('本当に消去しますか？この操作は元に戻せません。', () => {
             localStorage.removeItem('comboBattlerVolume');
             localStorage.removeItem('comboBattlerShake');
