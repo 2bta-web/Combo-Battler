@@ -133,6 +133,8 @@ document.getElementById('settings-clear-data').addEventListener('click', () => {
             localStorage.removeItem('comboBattlerVolume');
             localStorage.removeItem('comboBattlerShake');
             localStorage.removeItem('comboBattlerLayout');
+            localStorage.removeItem('comboBattlerStats');
+            localStorage.removeItem('comboBattlerAchievements');
             Object.keys(localStorage).filter(k => k.startsWith('comboBattlerHS_')).forEach(k => localStorage.removeItem(k));
             location.reload();
         });
