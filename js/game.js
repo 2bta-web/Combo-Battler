@@ -873,7 +873,6 @@ function saveHighScore(score) {
 async function submitScore(score, mode, phase) {
     if (score < 0 || score > 999999) return;
     const name = playerName || '名無し';
-    try { localStorage.setItem('comboBattlerLastNick_' + mode, name); } catch(e) {}
     const playTime = Math.floor((Date.now() - startTime) / 1000);
     const devId = getDeviceId();
     try {
