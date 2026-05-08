@@ -1,7 +1,7 @@
 let gameState = 'start';
 let gameLoopId = null;
 let targetSpawnTimer = null;
-let stats = { perfect: 0, good: 0, ok: 0, early: 0, miss: 0, totalHits: 0, maxCombo: 0, blue: 0, purple: 0, gold: 0, red: 0 };
+let stats = { perfect: 0, good: 0, ok: 0, early: 0, miss: 0, totalHits: 0, maxCombo: 0, blue: 0, purple: 0, gold: 0, red: 0, maxStreak: 0 };
 let scoreBreakdown = { base: 0, crit: 0, doubleStrike: 0, echo: 0, lucky: 0, damage: 0, feverBonus: 0, chain: 0, absorb: 0, finisher: 0, streak: 0 };
 let startTime = 0;
 
@@ -176,7 +176,7 @@ function getModeLabel() {
 }
 
 function initGame() {
-    stats = { perfect: 0, good: 0, ok: 0, early: 0, miss: 0, totalHits: 0, maxCombo: 0, blue: 0, purple: 0, gold: 0, red: 0 };
+    stats = { perfect: 0, good: 0, ok: 0, early: 0, miss: 0, totalHits: 0, maxCombo: 0, blue: 0, purple: 0, gold: 0, red: 0, maxStreak: 0 };
     scoreBreakdown = { base: 0, crit: 0, doubleStrike: 0, echo: 0, lucky: 0, damage: 0, feverBonus: 0, chain: 0, absorb: 0, finisher: 0, streak: 0 };
     initAudio();
     initPhase();
@@ -331,6 +331,7 @@ window.onTargetHit = function(judgment, targetType) {
         addLog(`Perfect! ${actualDamage}ダメージ コンボ${combo}${targetType !== 'normal' ? ' [' + targetType + ']' : ''}`);
 
         const streakMult = addPerfectStreak();
+        stats.maxStreak = Math.max(stats.maxStreak, getPerfectStreak());
         if (streakMult > 0) {
             const bonus = Math.floor(actualDamage * streakMult);
             damageEnemy(bonus);
@@ -571,6 +572,7 @@ function updateResultStats() {
     document.getElementById('stat-miss').textContent = s.miss;
     document.getElementById('stat-early').textContent = s.early;
     document.getElementById('stat-maxcombo').textContent = s.maxCombo;
+    document.getElementById('stat-maxstreak').textContent = s.maxStreak;
     document.getElementById('stat-blue').textContent = s.blue;
     document.getElementById('stat-purple').textContent = s.purple;
     document.getElementById('stat-gold').textContent = s.gold;
