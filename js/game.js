@@ -161,6 +161,25 @@ document.getElementById('ranking-submit-btn').addEventListener('click', async ()
     const phase = getPhase();
     playerName = document.getElementById('player-name-input').value.trim();
     if (!playerName) playerName = '名無し';
+
+    const devId = getDeviceId();
+    let storedScore = 0;
+    try {
+        const myRes = await fetch(SB_URL + '?mode=eq.' + mode + '&device_id=eq.' + devId + '&select=score&limit=1', {
+            headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+        });
+        const myData = await myRes.json();
+        if (myData && myData.length > 0) storedScore = myData[0].score;
+    } catch(e) {}
+
+    if (score <= storedScore) {
+        btn.textContent = 'ハイスコア更新なし';
+        btn.disabled = true;
+        playWarningSound();
+        setTimeout(() => { btn.textContent = 'ランキングに送信'; btn.disabled = false; }, 2000);
+        return;
+    }
+
     await submitScore(score, mode, phase);
     btn.textContent = '送信しました！';
     btn.disabled = true;
