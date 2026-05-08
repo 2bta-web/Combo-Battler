@@ -1054,7 +1054,7 @@ body.flash {
 #settings-btn {
     position: absolute;
     top: 120px;
-    right: 120px;
+    right: 170px;
     width: 150px;
     height: 75px;
     font-size: 42px;
@@ -1371,10 +1371,11 @@ body.flash {
 #ranking-btn {
     position: absolute;
     top: 210px;
-    right: 120px;
-    width: 150px;
+    right: 170px;
+    width: 170px;
     height: 55px;
     font-size: 22px;
+    padding: 0;
     color: #88aaff;
     background: rgba(40, 40, 70, 0.3);
     border: 2px solid #4a4a6a;
@@ -1441,10 +1442,11 @@ body.flash {
 #tutorial-btn {
     position: absolute;
     top: 280px;
-    right: 120px;
-    width: 150px;
+    right: 170px;
+    width: 170px;
     height: 55px;
     font-size: 22px;
+    padding: 0;
     color: #88aaff;
     background: rgba(40, 40, 70, 0.3);
     border: 2px solid #4a4a6a;
