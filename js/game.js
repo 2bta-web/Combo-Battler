@@ -944,6 +944,7 @@ function resetLayout() {
         el.style.top = '';
         el.style.left = '';
         el.style.right = '';
+        el.style.bottom = '';
         el.style.width = '';
         el.style.height = '';
         el.querySelectorAll('*').forEach(c => c.style.fontSize = '');
