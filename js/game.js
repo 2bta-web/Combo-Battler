@@ -176,11 +176,12 @@ async function loadRanking(mode) {
         list.innerHTML = '<div style="color:#666;padding:20px;">まだデータがありません</div>';
         return;
     }
+    let nick = localStorage.getItem('comboBattlerLastNick') || '';
     list.innerHTML = '';
     data.forEach((r, i) => {
         const d = document.createElement('div');
         d.className = 'rank-entry';
-        if (r.player_name === (playerName || '名無し') && i < 5) d.classList.add('is-me');
+        if (r.player_name === nick && i < 5) d.classList.add('is-me');
         d.innerHTML = '<span class="r-pos">' + (i+1) + '</span><span class="r-name">' + escHtml(r.player_name) + '</span><span class="r-score">' + r.score.toLocaleString() + '</span><span class="r-phase">Ph' + r.phase + '</span>';
         list.appendChild(d);
     });
@@ -198,11 +199,12 @@ async function showResultRanking(score, mode) {
         list.innerHTML = '<span style="color:#555;">まだデータがありません</span>';
         return;
     }
+    let nick = localStorage.getItem('comboBattlerLastNick') || '';
     list.innerHTML = '';
     data.forEach((r, i) => {
         const d = document.createElement('div');
         d.className = 'rank-entry';
-        if (r.player_name === (playerName || '名無し')) d.classList.add('is-me');
+        if (r.player_name === nick) d.classList.add('is-me');
         d.innerHTML = '<span class="r-pos">' + (i+1) + '</span><span class="r-name">' + escHtml(r.player_name) + '</span><span class="r-score">' + r.score.toLocaleString() + '</span>';
         list.appendChild(d);
     });
@@ -852,6 +854,7 @@ function saveHighScore(score) {
 async function submitScore(score, mode, phase) {
     if (score < 0 || score > 999999) return;
     const name = playerName || '名無し';
+    try { localStorage.setItem('comboBattlerLastNick', name); } catch(e) {}
     const playTime = Math.floor((Date.now() - startTime) / 1000);
     const devId = getDeviceId();
     try {
@@ -875,12 +878,17 @@ async function fetchRanking(mode, limit) {
 
 async function fetchMyRank(score, mode) {
     try {
-        const url = SB_URL + `?mode=eq.${mode}&score=gt.${score}&select=count`;
-        const res = await fetch(url, {
+        const devId = getDeviceId();
+        const myRes = await fetch(SB_URL + `?mode=eq.${mode}&device_id=eq.${devId}&select=score&limit=1`, {
             headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
         });
-        const data = await res.json();
-        return data.length ? data[0].count + 1 : 1;
+        const myData = await myRes.json();
+        const storedScore = myData && myData.length > 0 ? myData[0].score : score;
+        const countRes = await fetch(SB_URL + `?mode=eq.${mode}&score=gt.${storedScore}&device_id=neq.${devId}&select=count`, {
+            headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+        });
+        const countData = await countRes.json();
+        return countData.length ? countData[0].count + 1 : 1;
     } catch(e) { return '?'; }
 }
 
