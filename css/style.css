@@ -1367,3 +1367,60 @@ body.flash {
         margin-top: 18px;
     }
 }
+
+#ranking-btn {
+    position: absolute;
+    top: 185px;
+    right: 120px;
+    width: 100px;
+    height: 40px;
+    font-size: 16px;
+    color: #88aaff;
+    background: rgba(40, 40, 70, 0.3);
+    border: 2px solid #4a4a6a;
+    border-radius: 10px;
+    cursor: pointer;
+    z-index: 500;
+    transition: all 0.2s;
+}
+#ranking-btn:hover { color: #fff; border-color: #88aaff; background: rgba(60, 60, 100, 0.4); }
+
+#ranking-modal {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(25, 25, 45, 0.98);
+    border: 2px solid #5a5a8a;
+    border-radius: 10px;
+    padding: 25px;
+    min-width: 360px;
+    max-height: 80vh;
+    overflow-y: auto;
+    z-index: 500;
+}
+#ranking-modal.hidden { display: none; }
+.ranking-title { font-size: 22px; font-weight: bold; color: #fff; text-align: center; margin-bottom: 12px; }
+.ranking-tabs { display: flex; gap: 0; margin-bottom: 12px; border-bottom: 1px solid #3a3a5a; }
+.ranking-tab { padding: 6px 18px; font-size: 15px; color: #666; cursor: pointer; border-bottom: 2px solid transparent; }
+.ranking-tab:hover { color: #aaa; }
+.ranking-tab.active { color: #fff; border-bottom-color: #88aaff; }
+#ranking-list { min-height: 200px; }
+.rank-entry { display: flex; gap: 10px; padding: 4px 0; font-size: 15px; color: #aaa; border-bottom: 1px solid #2a2a4a; }
+.rank-entry .r-pos { width: 30px; text-align: right; color: #666; font-weight: bold; }
+.rank-entry .r-name { flex: 1; }
+.rank-entry .r-score { text-align: right; color: #ffd700; width: 100px; }
+.rank-entry .r-phase { text-align: right; color: #666; width: 50px; }
+.rank-entry.is-me { background: rgba(255, 215, 0, 0.08); }
+.rank-entry.is-me .r-name { color: #ffd700; font-weight: bold; }
+#ranking-close { display: block; margin: 15px auto 0; padding: 8px 30px; font-size: 14px; color: #fff; background: #4a4aaa; border: none; border-radius: 5px; cursor: pointer; }
+#ranking-close:hover { background: #5a5aba; }
+
+.result-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 16px; color: #aaa; }
+#player-name-input { background: #2a2a4a; border: 1px solid #4a4a6a; border-radius: 4px; color: #fff; padding: 4px 10px; font-size: 16px; width: 160px; outline: none; }
+#player-name-input:focus { border-color: #88aaff; }
+
+#result-ranking { margin: 6px 0; text-align: center; }
+#result-ranking.hidden { display: none; }
+.ranking-section-title { font-size: 15px; color: #666; letter-spacing: 2px; margin-bottom: 6px; }
+#result-ranking-list { font-size: 14px; color: #aaa; }
+#result-myrank { font-size: 14px; color: #ffd700; margin-top: 4px; }

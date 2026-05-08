@@ -114,6 +114,10 @@
                 <div class="final-score" id="final-score">0</div>
                 <div class="hs-label">ハイスコア: <span id="highscore-value">0</span></div>
             </div>
+            <div class="result-name-row">
+                <span>名前: </span>
+                <input type="text" id="player-name-input" maxlength="10" placeholder="名無し">
+            </div>
             <div class="result-breakdown" id="result-breakdown">
                 <div class="result-bd-row">合計ダメ: <span id="bd-damage-total">0</span></div>
                 <div class="result-bd-toggle" id="bd-toggle">[詳細▼]</div>
@@ -136,6 +140,11 @@
                         <span>フィニッシャー: <span id="bd-finisher">0</span></span>
                     </div>
                 </div>
+            </div>
+            <div id="result-ranking" class="hidden">
+                <div class="ranking-section-title">ランキング</div>
+                <div id="result-ranking-list"></div>
+                <div id="result-myrank"></div>
             </div>
             <div class="result-stats-grid">
                 <span>Perfect: <span id="stat-perfect">0</span></span>
@@ -164,6 +173,7 @@
 
         <div id="start-screen">
             <div id="settings-btn">設定</div>
+            <button id="ranking-btn">ランキング</button>
             <div class="start-title">コンボローグストライク</div>
             <div class="start-subtitle">タイミングよく撃て！</div>
             <div class="mode-select-title">モードを選べ</div>
@@ -213,6 +223,17 @@
             <button id="settings-layout-btn">レイアウト編集</button>
             <button id="settings-clear-data">データをすべて消去</button>
             <button id="settings-close">閉じる</button>
+        </div>
+
+        <div id="ranking-modal" class="hidden">
+            <div class="ranking-title">ランキング</div>
+            <div class="ranking-tabs">
+                <span class="ranking-tab active" data-rank-mode="standard">Standard</span>
+                <span class="ranking-tab" data-rank-mode="hard">Hard</span>
+                <span class="ranking-tab" data-rank-mode="endless">Endless</span>
+            </div>
+            <div id="ranking-list"></div>
+            <button id="ranking-close">閉じる</button>
         </div>
 
         <div id="layout-editor" class="hidden">

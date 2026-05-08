@@ -3,6 +3,9 @@ let gameLoopId = null;
 let targetSpawnTimer = null;
 let phaseTransitionTimer = null;
 let isPausing = false;
+const SB_URL = 'https://ssummgwuskpglukuzohw.supabase.co/rest/v1/scores';
+const SB_KEY = 'sb_publishable_Tgw3GYqTZQ494GhTXVmSzQ_PyV5VfoZ';
+let playerName = '';
 let stats = { perfect: 0, good: 0, ok: 0, early: 0, miss: 0, totalHits: 0, maxCombo: 0, blue: 0, purple: 0, gold: 0, red: 0, maxStreak: 0 };
 let scoreBreakdown = { base: 0, crit: 0, doubleStrike: 0, echo: 0, lucky: 0, damage: 0, feverBonus: 0, chain: 0, absorb: 0, finisher: 0, streak: 0 };
 let startTime = 0;
@@ -122,6 +125,74 @@ document.getElementById('settings-shake').addEventListener('click', (e) => {
     try { localStorage.setItem('comboBattlerShake', opt.dataset.value); } catch(ex) {}
 });
 
+// Ranking
+document.getElementById('ranking-btn').addEventListener('click', () => {
+    playOpenSound();
+    document.getElementById('ranking-modal').classList.remove('hidden');
+    loadRanking('standard');
+});
+document.getElementById('ranking-close').addEventListener('click', () => {
+    playCloseSound();
+    document.getElementById('ranking-modal').classList.add('hidden');
+});
+document.getElementById('ranking-modal').addEventListener('click', (e) => {
+    const tab = e.target.closest('.ranking-tab');
+    if (tab) {
+        playCancelSound();
+        document.querySelectorAll('.ranking-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        loadRanking(tab.dataset.rankMode);
+    }
+});
+
+async function loadRanking(mode) {
+    const list = document.getElementById('ranking-list');
+    list.innerHTML = '<div style="color:#666;padding:20px;">読み込み中...</div>';
+    const data = await fetchRanking(mode, 10);
+    if (!data || data.length === 0) {
+        list.innerHTML = '<div style="color:#666;padding:20px;">まだデータがありません</div>';
+        return;
+    }
+    list.innerHTML = '';
+    data.forEach((r, i) => {
+        const d = document.createElement('div');
+        d.className = 'rank-entry';
+        if (r.player_name === (playerName || '名無し') && i < 5) d.classList.add('is-me');
+        d.innerHTML = '<span class="r-pos">' + (i+1) + '</span><span class="r-name">' + escHtml(r.player_name) + '</span><span class="r-score">' + r.score.toLocaleString() + '</span><span class="r-phase">Ph' + r.phase + '</span>';
+        list.appendChild(d);
+    });
+}
+
+async function showResultRanking(score, mode) {
+    const el = document.getElementById('result-ranking');
+    const list = document.getElementById('result-ranking-list');
+    const myrank = document.getElementById('result-myrank');
+    el.classList.remove('hidden');
+    list.innerHTML = '<span style="color:#666;">読み込み中...</span>';
+    myrank.textContent = '';
+    const data = await fetchRanking(mode, 5);
+    if (!data || data.length === 0) {
+        list.innerHTML = '<span style="color:#555;">まだデータがありません</span>';
+        return;
+    }
+    list.innerHTML = '';
+    data.forEach((r, i) => {
+        const d = document.createElement('div');
+        d.className = 'rank-entry';
+        if (r.player_name === (playerName || '名無し')) d.classList.add('is-me');
+        d.innerHTML = '<span class="r-pos">' + (i+1) + '</span><span class="r-name">' + escHtml(r.player_name) + '</span><span class="r-score">' + r.score.toLocaleString() + '</span>';
+        list.appendChild(d);
+    });
+    const rank = await fetchMyRank(score, mode);
+    myrank.textContent = 'あなたの順位: ' + rank + '位';
+}
+
+function escHtml(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+}
+
 // Pause tabs
 document.querySelectorAll('.pause-tab').forEach(tab => {
     tab.addEventListener('click', () => {
@@ -163,6 +234,7 @@ function startGame(mode) {
     gameState = 'playing';
     START_SCREEN.classList.add('hidden');
     RESULT_SCREEN.classList.add('hidden');
+    playerName = '';
 
     initGame();
     applyLayout();
@@ -697,6 +769,9 @@ function retireGame(title) {
     document.getElementById('pause-overlay').classList.add('hidden');
     document.getElementById('fever-timer').classList.add('hidden');
     addLog(`リタイア 最終スコア: ${finalScore.toLocaleString()}`);
+    showResultRanking(finalScore, window.gameMode);
+    playerName = document.getElementById('player-name-input').value.trim();
+    submitScore(finalScore, window.gameMode, getPhase());
 }
 
 function gameComplete() {
@@ -724,6 +799,9 @@ function gameComplete() {
     RESULT_SCREEN.classList.remove('hidden');
     document.getElementById('fever-timer').classList.add('hidden');
     addLog(`ゲームクリア！最終スコア: ${finalScore.toLocaleString()}`);
+    showResultRanking(finalScore, window.gameMode);
+    playerName = document.getElementById('player-name-input').value.trim();
+    submitScore(finalScore, window.gameMode, getPhase());
 }
 
 function loadHighScore() {
@@ -747,6 +825,38 @@ function saveHighScore(score) {
         return true;
     }
     return false;
+}
+
+async function submitScore(score, mode, phase) {
+    const name = playerName || '名無し';
+    try {
+        await fetch(SB_URL, {
+            method: 'POST',
+            headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+            body: JSON.stringify({ score, mode, phase, player_name: name })
+        });
+    } catch(e) {}
+}
+
+async function fetchRanking(mode, limit) {
+    try {
+        const url = SB_URL + `?mode=eq.${mode}&order=score.desc&limit=${limit}&select=player_name,score,phase,created_at`;
+        const res = await fetch(url, {
+            headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+        });
+        return await res.json();
+    } catch(e) { return []; }
+}
+
+async function fetchMyRank(score, mode) {
+    try {
+        const url = SB_URL + `?mode=eq.${mode}&score=gt.${score}&select=count`;
+        const res = await fetch(url, {
+            headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+        });
+        const data = await res.json();
+        return data.length ? data[0].count + 1 : 1;
+    } catch(e) { return '?'; }
 }
 
 function screenShake() {
