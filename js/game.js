@@ -267,6 +267,9 @@ function getModeLabel() {
 
 function initGame() {
     if (phaseTransitionTimer) { clearTimeout(phaseTransitionTimer); phaseTransitionTimer = null; }
+    const sbBtn = document.getElementById('ranking-submit-btn');
+    sbBtn.textContent = 'ランキングに送信';
+    sbBtn.disabled = false;
     stats = { perfect: 0, good: 0, ok: 0, early: 0, miss: 0, totalHits: 0, maxCombo: 0, blue: 0, purple: 0, gold: 0, red: 0, maxStreak: 0 };
     scoreBreakdown = { base: 0, crit: 0, doubleStrike: 0, echo: 0, lucky: 0, damage: 0, feverBonus: 0, chain: 0, absorb: 0, finisher: 0, streak: 0 };
     initAudio();
