@@ -735,19 +735,20 @@ body.flash {
 }
 
 #tweet-btn {
-    margin-top: 10px;
-    padding: 10px 30px;
-    font-size: 14px;
+    margin-top: 20px;
+    padding: 15px 40px;
+    font-size: 18px;
     background: #1da1f2;
     color: #fff;
-    border: none;
-    border-radius: 6px;
+    border: 2px solid #3db4f2;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 #tweet-btn:hover {
     background: #1a8cd8;
-    transform: scale(1.02);
+    border-color: #6dc5f5;
+    transform: scale(1.05);
 }
 
 /* Start Screen */
