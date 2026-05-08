@@ -496,6 +496,7 @@ function enemyDefeated() {
     clearTargets();
     pauseFeverSystem();
     playPhaseClearSound();
+    document.getElementById('choice-options').innerHTML = '';
 
     const phase = getPhase();
     const isBoss = isBossPhase(phase);
