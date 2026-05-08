@@ -195,7 +195,7 @@ async function loadRanking(mode) {
         list.innerHTML = '<div style="color:#666;padding:20px;">まだデータがありません</div>';
         return;
     }
-    let nick = localStorage.getItem('comboBattlerLastNick') || '';
+    let nick = localStorage.getItem('comboBattlerLastNick_' + mode) || '';
     list.innerHTML = '';
     data.forEach((r, i) => {
         const d = document.createElement('div');
@@ -218,7 +218,7 @@ async function showResultRanking(score, mode) {
         list.innerHTML = '<span style="color:#555;">まだデータがありません</span>';
         return;
     }
-    let nick = localStorage.getItem('comboBattlerLastNick') || '';
+    let nick = localStorage.getItem('comboBattlerLastNick_' + mode) || '';
     list.innerHTML = '';
     data.forEach((r, i) => {
         const d = document.createElement('div');
@@ -873,7 +873,7 @@ function saveHighScore(score) {
 async function submitScore(score, mode, phase) {
     if (score < 0 || score > 999999) return;
     const name = playerName || '名無し';
-    try { localStorage.setItem('comboBattlerLastNick', name); } catch(e) {}
+    try { localStorage.setItem('comboBattlerLastNick_' + mode, name); } catch(e) {}
     const playTime = Math.floor((Date.now() - startTime) / 1000);
     const devId = getDeviceId();
     try {
