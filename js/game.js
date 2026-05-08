@@ -1,6 +1,8 @@
 let gameState = 'start';
 let gameLoopId = null;
 let targetSpawnTimer = null;
+let phaseTransitionTimer = null;
+let isPausing = false;
 let stats = { perfect: 0, good: 0, ok: 0, early: 0, miss: 0, totalHits: 0, maxCombo: 0, blue: 0, purple: 0, gold: 0, red: 0, maxStreak: 0 };
 let scoreBreakdown = { base: 0, crit: 0, doubleStrike: 0, echo: 0, lucky: 0, damage: 0, feverBonus: 0, chain: 0, absorb: 0, finisher: 0, streak: 0 };
 let startTime = 0;
@@ -227,12 +229,19 @@ function spawnNextTarget() {
 
 function pauseGame() {
     if (gameState !== 'playing' && gameState !== 'phaseTransition') return;
+    if (isPausing) return;
+    isPausing = true;
     window.wasChoiceOpen = gameState === 'phaseTransition';
     if (window.wasChoiceOpen) {
         document.getElementById('choice-modal').classList.add('hidden');
     }
     gameState = 'paused';
     if (targetSpawnTimer) { clearTimeout(targetSpawnTimer); targetSpawnTimer = null; }
+    if (phaseTransitionTimer) { clearTimeout(phaseTransitionTimer); phaseTransitionTimer = null; }
+    if (typeof staggeredTimeouts !== 'undefined') {
+        staggeredTimeouts.forEach(clearTimeout);
+        staggeredTimeouts = [];
+    }
     pauseTargets();
     document.getElementById('pause-overlay').classList.remove('hidden');
     document.getElementById('pause-volume').value = Math.round(getVolume() * 100);
@@ -257,6 +266,7 @@ function pauseGame() {
 
 function resumeGame() {
     if (gameState !== 'paused') return;
+    isPausing = false;
     gameState = window.wasChoiceOpen ? 'phaseTransition' : 'playing';
     if (window.wasChoiceOpen) {
         document.getElementById('choice-modal').classList.remove('hidden');
@@ -504,10 +514,10 @@ function enemyDefeated() {
 
     if (isBoss) {
         showText('ボス撃破! 2つ選べ');
-        setTimeout(() => showBossChoices(), 800);
+        phaseTransitionTimer = setTimeout(() => showBossChoices(), 800);
     } else if (shouldOfferUpgrade()) {
         showText('選択肢を選んでください');
-        setTimeout(() => showChoices(), 800);
+        phaseTransitionTimer = setTimeout(() => showChoices(), 800);
     } else {
         nextPhase();
         const newPhase = getPhase();
@@ -642,7 +652,9 @@ function formatPlayTime() {
 
 function retireGame(title) {
     gameState = 'result';
+    isPausing = false;
     if (targetSpawnTimer) { clearTimeout(targetSpawnTimer); targetSpawnTimer = null; }
+    if (phaseTransitionTimer) { clearTimeout(phaseTransitionTimer); phaseTransitionTimer = null; }
     clearTargets();
     playRetireSound();
     document.getElementById('choice-modal').classList.add('hidden');
@@ -669,6 +681,7 @@ function retireGame(title) {
 
 function gameComplete() {
     gameState = 'result';
+    isPausing = false;
     const finalScore = getScore();
     const isNewRecord = saveHighScore(finalScore);
 
