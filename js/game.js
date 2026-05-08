@@ -646,6 +646,12 @@ window.onTargetHit = function(judgment, targetType) {
             addLog(`＋${bonus} ストリークボーナス!`);
             if (getEnemyHPPercent() <= 0) { enemyDefeated(); return; }
         }
+        const chainBonus = getChainBonus();
+        if (chainBonus > 0) {
+            addScore(chainBonus);
+            scoreBreakdown.chain += chainBonus;
+            addLog(`チェインボーナス +${chainBonus}`);
+        }
     } else {
         if (judgment === 'good') { stats.good++; playGoodSound(); }
         else if (judgment === 'ok') { stats.ok++; playOkSound(); }
@@ -695,13 +701,6 @@ window.onTargetHit = function(judgment, targetType) {
         saveStats(st);
         playFeverSound();
         addLog('🔥 FEVER! 30秒間スコア2倍');
-    }
-
-    const chainBonus = getChainBonus();
-    if (chainBonus > 0) {
-        addScore(chainBonus);
-        scoreBreakdown.chain += chainBonus;
-        addLog(`チェインボーナス +${chainBonus}`);
     }
 
     const dsMult = getDoubleStrikeMultiplier();
