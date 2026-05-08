@@ -93,6 +93,14 @@ document.addEventListener('keydown', (e) => {
             closeLayoutEditor();
             return;
         }
+        if (!document.getElementById('ranking-modal').classList.contains('hidden')) {
+            document.getElementById('ranking-modal').classList.add('hidden');
+            return;
+        }
+        if (!document.getElementById('tutorial-modal').classList.contains('hidden')) {
+            document.getElementById('tutorial-modal').classList.add('hidden');
+            return;
+        }
         if (gameState === 'playing' || gameState === 'phaseTransition') pauseGame();
         else if (gameState === 'paused') resumeGame();
     }
@@ -152,6 +160,16 @@ document.addEventListener('click', (e) => {
         e.target.closest('.ranking-tab').classList.add('active');
         loadRanking(e.target.closest('.ranking-tab').dataset.rankMode);
     }
+});
+document.getElementById('tutorial-btn').addEventListener('click', () => {
+    playOpenSound();
+    document.getElementById('tutorial-modal').classList.remove('hidden');
+    document.getElementById('tutorial-btn').classList.remove('tutorial-new');
+    try { localStorage.setItem('comboBattlerTutorial', '1'); } catch(e) {}
+});
+document.getElementById('tutorial-close').addEventListener('click', () => {
+    playCloseSound();
+    document.getElementById('tutorial-modal').classList.add('hidden');
 });
 document.getElementById('ranking-submit-btn').addEventListener('click', async () => {
     const btn = document.getElementById('ranking-submit-btn');
@@ -1190,6 +1208,9 @@ document.getElementById('layout-close').addEventListener('click', () => { playCl
 
 loadHighScore();
 initAudio();
+if (!localStorage.getItem('comboBattlerTutorial')) {
+    document.getElementById('tutorial-btn').classList.add('tutorial-new');
+}
 
 document.getElementById('bd-toggle').addEventListener('click', () => {
     const detail = document.getElementById('bd-detail');
