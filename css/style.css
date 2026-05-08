@@ -1098,7 +1098,7 @@ body.flash {
     align-items: center;
     gap: 15px;
     margin-bottom: 15px;
-    font-size: 14px;
+    font-size: 16px;
     color: #ccc;
 }
 .settings-row span:first-child { min-width: 60px; }
@@ -1208,9 +1208,9 @@ body.flash {
 }
 .result-breakdown { margin: 10px 0; text-align: center; }
 .result-bd-row { font-size: 18px; color: #ccc; margin: 4px 0; }
-.result-bd-toggle { font-size: 13px; color: #666; cursor: pointer; margin: 6px 0; }
+.result-bd-toggle { font-size: 15px; color: #666; cursor: pointer; margin: 6px 0; }
 .result-bd-toggle:hover { color: #aaa; }
-.bd-section-title { font-size: 13px; color: #666; letter-spacing: 2px; margin: 10px 0 4px; }
+.bd-section-title { font-size: 15px; color: #666; letter-spacing: 2px; margin: 10px 0 4px; }
 .bd-row { font-size: 15px; color: #aaa; margin: 2px 0; }
 #playtime-value { color: #aaa; }
 
