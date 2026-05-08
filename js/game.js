@@ -220,15 +220,20 @@ async function showResultRanking(score, mode) {
     }
     let myDevId = getDeviceId();
     list.innerHTML = '';
+    let myPos = -1;
     data.forEach((r, i) => {
         const d = document.createElement('div');
         d.className = 'rank-entry';
-        if (r.device_id === myDevId) d.classList.add('is-me');
+        if (r.device_id === myDevId) { d.classList.add('is-me'); myPos = i + 1; }
         d.innerHTML = '<span class="r-pos">' + (i+1) + '</span><span class="r-name">' + escHtml(r.player_name) + '</span><span class="r-score">' + r.score.toLocaleString() + '</span>';
         list.appendChild(d);
     });
-    const rank = await fetchMyRank(score, mode);
-    myrank.textContent = 'あなたの順位: ' + rank + '位';
+    if (myPos > 0) {
+        myrank.textContent = 'あなたの順位: ' + myPos + '位';
+    } else {
+        const rank = await fetchMyRank(score, mode);
+        if (rank > 0) myrank.textContent = 'あなたの順位: ' + rank + '位';
+    }
 }
 
 function escHtml(s) {
