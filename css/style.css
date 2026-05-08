@@ -871,6 +871,7 @@ body.flash {
 .mode-btn-desc {
     font-size: 14px;
     color: #888;
+    text-align: center;
 }
 
 .start-tutorial {
