@@ -1512,6 +1512,8 @@ body.flash {
 #stats-close:hover, #achievements-close:hover { background: #5a5aba; }
 
 #achievements-list { font-size: 15px; color: #aaa; line-height: 2; max-height: 300px; overflow-y: auto; }
+#achievements-list::-webkit-scrollbar { width: 4px; }
+#achievements-list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 2px; }
 .ach-entry { display: flex; align-items: center; gap: 8px; }
 .ach-entry .ach-icon { width: 20px; text-align: center; }
 .ach-entry .ach-name { flex: 1; }
