@@ -347,13 +347,19 @@ function checkAchievements() {
     const stats = getStats();
     let unlocked = {};
     try { unlocked = JSON.parse(localStorage.getItem('comboBattlerAchievements')) || {}; } catch(e) {}
+    const queue = [];
     ACHIEVEMENTS.forEach(a => {
         if (!unlocked[a.id] && a.check(stats)) {
             unlocked[a.id] = true;
-            showAchievementPopup(a.name);
+            queue.push(a.name);
         }
     });
-    try { localStorage.setItem('comboBattlerAchievements', JSON.stringify(unlocked)); } catch(e) {}
+    if (queue.length > 0) {
+        try { localStorage.setItem('comboBattlerAchievements', JSON.stringify(unlocked)); } catch(e) {}
+        queue.forEach((name, i) => {
+            setTimeout(() => showAchievementPopup(name), i * 1000);
+        });
+    }
 }
 
 function showAchievementPopup(name) {
@@ -442,6 +448,7 @@ function startGame(mode) {
     resumeAudio();
     playGameStartSound();
     updateStatsPlay();
+    checkAchievements();
     startGameLoop();
 }
 
@@ -741,6 +748,7 @@ window.onTargetHit = function(judgment, targetType) {
         enemyDefeated();
     }
     updateStatsHits(1, getCombo(), getPerfectStreak());
+    checkAchievements();
 };
 
 window.onTargetMiss = function() {
