@@ -195,12 +195,12 @@ async function loadRanking(mode) {
         list.innerHTML = '<div style="color:#666;padding:20px;">まだデータがありません</div>';
         return;
     }
-    let nick = localStorage.getItem('comboBattlerLastNick_' + mode) || '';
+    let myDevId = getDeviceId();
     list.innerHTML = '';
     data.forEach((r, i) => {
         const d = document.createElement('div');
         d.className = 'rank-entry';
-        if (r.player_name === nick && i < 5) d.classList.add('is-me');
+        if (r.device_id === myDevId && i < 5) d.classList.add('is-me');
         d.innerHTML = '<span class="r-pos">' + (i+1) + '</span><span class="r-name">' + escHtml(r.player_name) + '</span><span class="r-score">' + r.score.toLocaleString() + '</span><span class="r-phase">Ph' + r.phase + '</span>';
         list.appendChild(d);
     });
@@ -218,12 +218,12 @@ async function showResultRanking(score, mode) {
         list.innerHTML = '<span style="color:#555;">まだデータがありません</span>';
         return;
     }
-    let nick = localStorage.getItem('comboBattlerLastNick_' + mode) || '';
+    let myDevId = getDeviceId();
     list.innerHTML = '';
     data.forEach((r, i) => {
         const d = document.createElement('div');
         d.className = 'rank-entry';
-        if (r.player_name === nick) d.classList.add('is-me');
+        if (r.device_id === myDevId) d.classList.add('is-me');
         d.innerHTML = '<span class="r-pos">' + (i+1) + '</span><span class="r-name">' + escHtml(r.player_name) + '</span><span class="r-score">' + r.score.toLocaleString() + '</span>';
         list.appendChild(d);
     });
@@ -887,7 +887,7 @@ async function submitScore(score, mode, phase) {
 
 async function fetchRanking(mode, limit) {
     try {
-        const url = SB_URL + `?mode=eq.${mode}&order=score.desc&limit=${limit}&select=player_name,score,phase,created_at`;
+        const url = SB_URL + `?mode=eq.${mode}&order=score.desc&limit=${limit}&select=player_name,score,phase,created_at,device_id`;
         const res = await fetch(url, {
             headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
         });
