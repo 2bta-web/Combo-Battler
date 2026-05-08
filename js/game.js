@@ -153,7 +153,7 @@ document.addEventListener('click', (e) => {
         loadRanking(e.target.closest('.ranking-tab').dataset.rankMode);
     }
 });
-document.getElementById('ranking-submit-btn').addEventListener('click', () => {
+document.getElementById('ranking-submit-btn').addEventListener('click', async () => {
     const btn = document.getElementById('ranking-submit-btn');
     if (btn.disabled) return;
     const score = getScore();
@@ -161,11 +161,11 @@ document.getElementById('ranking-submit-btn').addEventListener('click', () => {
     const phase = getPhase();
     playerName = document.getElementById('player-name-input').value.trim();
     if (!playerName) playerName = '名無し';
-    submitScore(score, mode, phase);
+    await submitScore(score, mode, phase);
     btn.textContent = '送信しました！';
     btn.disabled = true;
     playConfirmSound();
-    setTimeout(() => { showResultRanking(score, mode); }, 500);
+    await showResultRanking(score, mode);
 });
 
 async function loadRanking(mode) {
