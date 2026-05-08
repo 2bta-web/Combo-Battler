@@ -201,12 +201,12 @@ function update(time) {
             ft.classList.remove('hidden');
             ft.style.color = '#ffd700';
             const remaining = Math.max(0, Math.ceil(window.feverEndTime - Date.now()));
-            ft.textContent = `FEVER ${remaining}s`;
+            document.getElementById('fever-timer-text').textContent = `FEVER ${remaining}s`;
         } else if (window.feverCooldownEnd && Date.now() < window.feverCooldownEnd) {
             ft.classList.remove('hidden');
             ft.style.color = '#666';
             const remaining = Math.ceil((window.feverCooldownEnd - Date.now()) / 1000);
-            ft.textContent = `準備中 ${remaining}s`;
+            document.getElementById('fever-timer-text').textContent = `準備中 ${remaining}s`;
         } else if (window.feverCooldownEnd) {
             ft.classList.add('hidden');
             window.feverCooldownEnd = 0;
@@ -758,8 +758,18 @@ function openLayoutEditor() {
     const ft = document.getElementById('fever-timer');
     ft.dataset.wasHidden = ft.classList.contains('hidden');
     ft.classList.remove('hidden');
-    ft.textContent = 'FEVER 30s';
+    document.getElementById('fever-timer-text').textContent = 'FEVER 30s';
     ft.style.color = '#ffd700';
+    if (ft.style.bottom && ft.style.bottom !== 'auto') {
+        const b = parseFloat(ft.style.bottom);
+        if (!isNaN(b)) ft.style.top = (window.innerHeight - b - ft.offsetHeight) + 'px';
+        ft.style.bottom = '';
+    }
+    if (ft.style.right && ft.style.right !== 'auto') {
+        const r = parseFloat(ft.style.right);
+        if (!isNaN(r)) ft.style.left = (window.innerWidth - r - ft.offsetWidth) + 'px';
+        ft.style.right = '';
+    }
 
     LAYOUT_ITEMS.forEach(id => {
         const el = document.getElementById(id);
