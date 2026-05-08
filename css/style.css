@@ -1055,9 +1055,9 @@ body.flash {
     position: absolute;
     top: 120px;
     right: 120px;
-    width: 100px;
-    height: 50px;
-    font-size: 28px;
+    width: 150px;
+    height: 75px;
+    font-size: 42px;
     color: #888;
     cursor: pointer;
     transition: color 0.2s;
@@ -1370,11 +1370,11 @@ body.flash {
 
 #ranking-btn {
     position: absolute;
-    top: 185px;
+    top: 210px;
     right: 120px;
-    width: 100px;
-    height: 40px;
-    font-size: 16px;
+    width: 150px;
+    height: 55px;
+    font-size: 22px;
     color: #88aaff;
     background: rgba(40, 40, 70, 0.3);
     border: 2px solid #4a4a6a;
@@ -1440,11 +1440,11 @@ body.flash {
 
 #tutorial-btn {
     position: absolute;
-    top: 240px;
+    top: 280px;
     right: 120px;
-    width: 100px;
-    height: 40px;
-    font-size: 16px;
+    width: 150px;
+    height: 55px;
+    font-size: 22px;
     color: #88aaff;
     background: rgba(40, 40, 70, 0.3);
     border: 2px solid #4a4a6a;
@@ -1463,7 +1463,7 @@ body.flash {
     border: 2px solid #5a5a8a;
     border-radius: 10px;
     padding: 25px;
-    min-width: 400px;
+    min-width: 480px;
     max-width: 500px;
     max-height: 80vh;
     overflow-y: auto;
