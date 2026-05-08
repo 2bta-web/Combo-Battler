@@ -135,14 +135,27 @@ document.getElementById('ranking-close').addEventListener('click', () => {
     playCloseSound();
     document.getElementById('ranking-modal').classList.add('hidden');
 });
-document.getElementById('ranking-modal').addEventListener('click', (e) => {
-    const tab = e.target.closest('.ranking-tab');
-    if (tab) {
+document.addEventListener('click', (e) => {
+    if (e.target.closest('.ranking-tab')) {
         playCancelSound();
         document.querySelectorAll('.ranking-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        loadRanking(tab.dataset.rankMode);
+        e.target.closest('.ranking-tab').classList.add('active');
+        loadRanking(e.target.closest('.ranking-tab').dataset.rankMode);
     }
+});
+document.getElementById('ranking-submit-btn').addEventListener('click', () => {
+    const btn = document.getElementById('ranking-submit-btn');
+    if (btn.disabled) return;
+    const score = getScore();
+    const mode = window.gameMode;
+    const phase = getPhase();
+    playerName = document.getElementById('player-name-input').value.trim();
+    if (!playerName) playerName = '名無し';
+    submitScore(score, mode, phase);
+    btn.textContent = '送信しました！';
+    btn.disabled = true;
+    playConfirmSound();
+    setTimeout(() => { showResultRanking(score, mode); }, 500);
 });
 
 async function loadRanking(mode) {
@@ -770,8 +783,6 @@ function retireGame(title) {
     document.getElementById('fever-timer').classList.add('hidden');
     addLog(`リタイア 最終スコア: ${finalScore.toLocaleString()}`);
     showResultRanking(finalScore, window.gameMode);
-    playerName = document.getElementById('player-name-input').value.trim();
-    submitScore(finalScore, window.gameMode, getPhase());
 }
 
 function gameComplete() {
@@ -800,8 +811,6 @@ function gameComplete() {
     document.getElementById('fever-timer').classList.add('hidden');
     addLog(`ゲームクリア！最終スコア: ${finalScore.toLocaleString()}`);
     showResultRanking(finalScore, window.gameMode);
-    playerName = document.getElementById('player-name-input').value.trim();
-    submitScore(finalScore, window.gameMode, getPhase());
 }
 
 function loadHighScore() {

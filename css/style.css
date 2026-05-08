@@ -1419,6 +1419,19 @@ body.flash {
 #player-name-input { background: #2a2a4a; border: 1px solid #4a4a6a; border-radius: 4px; color: #fff; padding: 4px 10px; font-size: 16px; width: 160px; outline: none; }
 #player-name-input:focus { border-color: #88aaff; }
 
+#ranking-submit-btn {
+    padding: 4px 12px;
+    font-size: 13px;
+    background: #4a4aaa;
+    color: #fff;
+    border: 1px solid #6a6aba;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+#ranking-submit-btn:hover { background: #5a5aba; }
+#ranking-submit-btn:disabled { background: #3a3a5a; color: #666; border-color: #4a4a5a; cursor: default; }
+
 #result-ranking { margin: 6px 0; text-align: center; }
 #result-ranking.hidden { display: none; }
 .ranking-section-title { font-size: 15px; color: #666; letter-spacing: 2px; margin-bottom: 6px; }
