@@ -657,13 +657,14 @@ body.flash {
     white-space: nowrap;
 }
 .result-stats-grid span:nth-child(7) { color: #ffd700; font-weight: bold; }
+.result-stats-grid span:nth-child(8) { color: #ff6b6b; font-weight: bold; }
 #stat-accuracy {
     color: #ffd700;
     font-weight: bold;
 }
 #stat-maxstreak {
-    color: #ff6b6b;
-    font-weight: bold;
+    color: #aaa;
+    font-weight: normal;
 }
 
 .result-upgrades {
