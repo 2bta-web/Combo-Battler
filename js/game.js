@@ -284,9 +284,11 @@ function resumeGame() {
     resumeTargets();
     document.getElementById('pause-overlay').classList.add('hidden');
     if (gameState === 'playing') {
-        targetSpawnTimer = setTimeout(() => {
-            if (gameState === 'playing') spawnTarget(getPhase(), true);
-        }, 300);
+        if (typeof activeTargets === 'undefined' || activeTargets.length === 0) {
+            targetSpawnTimer = setTimeout(() => {
+                if (gameState === 'playing') spawnTarget(getPhase(), true);
+            }, 300);
+        }
         gameLoopId = requestAnimationFrame(update);
     }
 }
