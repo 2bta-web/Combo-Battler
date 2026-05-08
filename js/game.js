@@ -613,9 +613,7 @@ function updateResultStats() {
     }
     const bd = scoreBreakdown;
     const dmgTotal = bd.base + bd.crit + bd.doubleStrike + bd.echo + bd.lucky + bd.streak;
-    const scoreTotal = bd.damage + bd.feverBonus + bd.chain + bd.absorb + bd.finisher;
     document.getElementById('bd-damage-total').textContent = dmgTotal.toLocaleString();
-    document.getElementById('bd-score-total').textContent = scoreTotal.toLocaleString();
     document.getElementById('bd-base').textContent = bd.base.toLocaleString();
     document.getElementById('bd-crit').textContent = bd.crit.toLocaleString();
     document.getElementById('bd-ds').textContent = bd.doubleStrike.toLocaleString();
