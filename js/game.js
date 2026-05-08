@@ -242,6 +242,7 @@ function pauseGame() {
     if (typeof staggeredTimeouts !== 'undefined') {
         staggeredTimeouts.forEach(clearTimeout);
         staggeredTimeouts = [];
+        batchSpawnTotal = 0;
     }
     pauseTargets();
     document.getElementById('pause-overlay').classList.remove('hidden');
