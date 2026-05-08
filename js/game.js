@@ -42,6 +42,16 @@ document.getElementById('restart-btn').addEventListener('click', () => {
     startGame(window.gameMode || 'standard');
 });
 document.getElementById('title-btn').addEventListener('click', () => { playCloseSound(); goToTitle(); });
+document.getElementById('tweet-btn').addEventListener('click', () => { playConfirmSound(); shareTweet(); });
+
+function shareTweet() {
+    const score = getScore().toLocaleString();
+    const mode = getModeLabel();
+    const phase = getPhase();
+    const text = `コンボローグストライク\n${mode} モード ${score}点！\n到達フェーズ: ${phase}\n\n`;
+    const url = 'https://2bta-web.github.io/Combo-Battler/';
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+}
 
 document.addEventListener('keydown', (e) => {
     if (e.key === ' ' || e.key === 'Enter') {

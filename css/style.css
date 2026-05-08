@@ -734,6 +734,22 @@ body.flash {
     border-color: #6a6a8a;
 }
 
+#tweet-btn {
+    margin-top: 10px;
+    padding: 10px 30px;
+    font-size: 14px;
+    background: #1da1f2;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+#tweet-btn:hover {
+    background: #1a8cd8;
+    transform: scale(1.02);
+}
+
 /* Start Screen */
 #start-screen {
     position: absolute;
