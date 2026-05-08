@@ -70,6 +70,8 @@ function getNonOverlappingPositions(count) {
 
 function spawnTarget(phase, isPlaying) {
     if (!isPlaying) return;
+    staggeredTimeouts.forEach(clearTimeout);
+    staggeredTimeouts = [];
     const count = getTargetCountForPhase(phase);
     const positions = getNonOverlappingPositions(count);
     const staggeredDelay = 600;
