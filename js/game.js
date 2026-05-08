@@ -129,7 +129,7 @@ document.getElementById('settings-shake').addEventListener('click', (e) => {
 document.getElementById('ranking-btn').addEventListener('click', () => {
     playOpenSound();
     document.getElementById('ranking-modal').classList.remove('hidden');
-    loadRanking('standard');
+    loadRanking(document.querySelector('.ranking-tab.active').dataset.rankMode);
 });
 document.getElementById('ranking-close').addEventListener('click', () => {
     playCloseSound();
