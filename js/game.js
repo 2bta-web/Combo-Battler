@@ -178,6 +178,7 @@ function getModeLabel() {
 }
 
 function initGame() {
+    if (phaseTransitionTimer) { clearTimeout(phaseTransitionTimer); phaseTransitionTimer = null; }
     stats = { perfect: 0, good: 0, ok: 0, early: 0, miss: 0, totalHits: 0, maxCombo: 0, blue: 0, purple: 0, gold: 0, red: 0, maxStreak: 0 };
     scoreBreakdown = { base: 0, crit: 0, doubleStrike: 0, echo: 0, lucky: 0, damage: 0, feverBonus: 0, chain: 0, absorb: 0, finisher: 0, streak: 0 };
     initAudio();
@@ -353,6 +354,10 @@ window.onTargetHit = function(judgment, targetType) {
             const bonus = Math.floor(actualDamage * streakMult);
             damageEnemy(bonus);
             scoreBreakdown.streak += bonus;
+            const streakScoreNoFever = bonus;
+            addScore(Math.floor(bonus * scoreMult));
+            scoreBreakdown.damage += streakScoreNoFever;
+            if (isFever()) scoreBreakdown.feverBonus += Math.floor(bonus * scoreMult) - streakScoreNoFever;
             addLog(`＋${bonus} ストリークボーナス!`);
             if (getEnemyHPPercent() <= 0) { enemyDefeated(); return; }
         }
@@ -544,6 +549,7 @@ function enemyDefeated() {
 }
 
 window.onChoiceSelected = function() {
+    if (gameState !== 'phaseTransition') return;
     playSelectSound();
     lastUpgradePhase = getPhase();
     addLog('選択肢決定');
@@ -570,6 +576,7 @@ function getEnemyHP(phase) {
 function goToTitle() {
     gameState = 'start';
     if (targetSpawnTimer) { clearTimeout(targetSpawnTimer); targetSpawnTimer = null; }
+    if (phaseTransitionTimer) { clearTimeout(phaseTransitionTimer); phaseTransitionTimer = null; }
     RESULT_SCREEN.classList.add('hidden');
     document.getElementById('choice-modal').classList.add('hidden');
     document.getElementById('pause-overlay').classList.add('hidden');
@@ -690,6 +697,7 @@ function retireGame(title) {
 function gameComplete() {
     gameState = 'result';
     isPausing = false;
+    if (phaseTransitionTimer) { clearTimeout(phaseTransitionTimer); phaseTransitionTimer = null; }
     const finalScore = getScore();
     const isNewRecord = saveHighScore(finalScore);
 

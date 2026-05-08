@@ -22,12 +22,6 @@ function getEnemyHPPercent() {
     return (currentHP / maxHP) * 100;
 }
 
-function setEnemyHP(hp) {
-    currentHP = hp;
-    maxHP = hp;
-    updateHPBar();
-}
-
 function updateHPBar() {
     const percent = getEnemyHPPercent();
     ENEMY_HP_FILL.style.width = `${percent}%`;

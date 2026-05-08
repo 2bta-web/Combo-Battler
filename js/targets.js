@@ -122,7 +122,7 @@ function createTarget(phase, position) {
         hit: false
     };
 
-    setTimeout(() => { entry.isClickable = true; }, 100);
+    entry.clickableTimer = setTimeout(() => { entry.isClickable = true; }, 100);
 
     el.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -230,6 +230,7 @@ function clearTargets() {
     staggeredTimeouts = [];
     activeTargets.forEach(e => {
         if (e.timeout) clearTimeout(e.timeout);
+        if (e.clickableTimer) clearTimeout(e.clickableTimer);
         e.el.remove();
     });
     activeTargets = [];
