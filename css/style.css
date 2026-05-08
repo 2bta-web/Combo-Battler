@@ -1382,7 +1382,7 @@ body.flash {
     transition: all 0.2s;
     left: 170px;
 }
-#ranking-btn, #stats-btn, #achievements-btn:hover { color: #fff; border-color: #88aaff; background: rgba(60, 60, 100, 0.4); }
+#ranking-btn:hover, #stats-btn:hover, #achievements-btn:hover { color: #fff; border-color: #88aaff; background: rgba(60, 60, 100, 0.4); }
 #ranking-btn { top: 120px; }
 #stats-btn { top: 190px; }
 #achievements-btn { top: 260px; }
