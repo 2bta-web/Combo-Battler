@@ -828,12 +828,14 @@ function saveHighScore(score) {
 }
 
 async function submitScore(score, mode, phase) {
+    if (score < 0 || score > 999999) return;
     const name = playerName || '名無し';
+    const playTime = Math.floor((Date.now() - startTime) / 1000);
     try {
         await fetch(SB_URL, {
             method: 'POST',
             headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-            body: JSON.stringify({ score, mode, phase, player_name: name })
+            body: JSON.stringify({ score, mode, phase, player_name: name, play_time: playTime })
         });
     } catch(e) {}
 }
