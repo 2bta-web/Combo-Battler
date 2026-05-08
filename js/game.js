@@ -6,6 +6,16 @@ let isPausing = false;
 const SB_URL = 'https://ssummgwuskpglukuzohw.supabase.co/rest/v1/scores';
 const SB_KEY = 'sb_publishable_Tgw3GYqTZQ494GhTXVmSzQ_PyV5VfoZ';
 let playerName = '';
+let deviceId = '';
+
+function getDeviceId() {
+    let id = localStorage.getItem('comboBattlerDeviceId');
+    if (!id) {
+        id = 'dev_' + Math.random().toString(36).slice(2, 10) + '_' + Date.now().toString(36);
+        try { localStorage.setItem('comboBattlerDeviceId', id); } catch(e) {}
+    }
+    return id;
+}
 let stats = { perfect: 0, good: 0, ok: 0, early: 0, miss: 0, totalHits: 0, maxCombo: 0, blue: 0, purple: 0, gold: 0, red: 0, maxStreak: 0 };
 let scoreBreakdown = { base: 0, crit: 0, doubleStrike: 0, echo: 0, lucky: 0, damage: 0, feverBonus: 0, chain: 0, absorb: 0, finisher: 0, streak: 0 };
 let startTime = 0;
@@ -843,11 +853,12 @@ async function submitScore(score, mode, phase) {
     if (score < 0 || score > 999999) return;
     const name = playerName || '名無し';
     const playTime = Math.floor((Date.now() - startTime) / 1000);
+    const devId = getDeviceId();
     try {
-        await fetch(SB_URL, {
+        await fetch(SB_URL + '?on_conflict=device_id,mode', {
             method: 'POST',
-            headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-            body: JSON.stringify({ score, mode, phase, player_name: name, play_time: playTime })
+            headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates' },
+            body: JSON.stringify({ score, mode, phase, player_name: name, play_time: playTime, device_id: devId })
         });
     } catch(e) {}
 }
