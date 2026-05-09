@@ -1347,6 +1347,15 @@ body.flash {
 .snap-guide.h { height: 1px; left: 0; right: 0; }
 .snap-guide.v { width: 1px; top: 0; bottom: 70px; }
 
+.start-version {
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+    font-size: 13px;
+    color: #444;
+    z-index: 500;
+}
+
 @media (max-height: 800px) {
     .start-title {
         font-size: 48px;
