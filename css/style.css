@@ -1086,6 +1086,13 @@ body.flash {
     overflow-y: auto;
     z-index: 500;
 }
+#settings-modal::-webkit-scrollbar {
+    width: 4px;
+}
+#settings-modal::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+}
 #settings-modal.hidden { display: none; }
 .settings-title {
     font-size: 18px;
@@ -1408,6 +1415,13 @@ body.flash {
     overflow-y: auto;
     z-index: 500;
 }
+#ranking-modal::-webkit-scrollbar {
+    width: 4px;
+}
+#ranking-modal::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+}
 #ranking-modal.hidden { display: none; }
 .ranking-title { font-size: 22px; font-weight: bold; color: #fff; text-align: center; margin-bottom: 12px; }
 .ranking-tabs { display: flex; gap: 0; margin-bottom: 12px; border-bottom: 1px solid #3a3a5a; }
@@ -1483,6 +1497,13 @@ body.flash {
     max-height: 80vh;
     overflow-y: auto;
     z-index: 500;
+}
+#tutorial-modal::-webkit-scrollbar {
+    width: 4px;
+}
+#tutorial-modal::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
 }
 #tutorial-modal.hidden { display: none; }
 .tutorial-title { font-size: 22px; font-weight: bold; color: #fff; text-align: center; margin-bottom: 14px; }
