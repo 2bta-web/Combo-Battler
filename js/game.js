@@ -135,6 +135,7 @@ document.getElementById('settings-clear-data').addEventListener('click', () => {
             localStorage.removeItem('comboBattlerLayout');
             localStorage.removeItem('comboBattlerStats');
             localStorage.removeItem('comboBattlerAchievements');
+            localStorage.removeItem('comboBattlerAchievementsComplete');
             Object.keys(localStorage).filter(k => k.startsWith('comboBattlerHS_')).forEach(k => localStorage.removeItem(k));
             location.reload();
         });
@@ -359,6 +360,12 @@ function checkAchievements() {
         queue.forEach((name, i) => {
             setTimeout(() => showAchievementPopup(name), i * 1000);
         });
+    }
+    const allUnlocked = ACHIEVEMENTS.every(a => unlocked[a.id]);
+    if (allUnlocked) {
+        document.getElementById('achievements-btn').classList.add('achievements-complete');
+        document.getElementById('achievements-modal').classList.add('achievements-complete');
+        try { localStorage.setItem('comboBattlerAchievementsComplete', '1'); } catch(e) {}
     }
 }
 
@@ -1360,6 +1367,10 @@ loadHighScore();
 initAudio();
 if (!localStorage.getItem('comboBattlerTutorial')) {
     document.getElementById('tutorial-btn').classList.add('tutorial-new');
+}
+if (localStorage.getItem('comboBattlerAchievementsComplete')) {
+    document.getElementById('achievements-btn').classList.add('achievements-complete');
+    document.getElementById('achievements-modal').classList.add('achievements-complete');
 }
 
 document.getElementById('bd-toggle').addEventListener('click', () => {
