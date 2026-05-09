@@ -1051,7 +1051,8 @@ function saveHighScore(score) {
 }
 
 async function submitScore(score, mode, phase) {
-    if (score < 0 || score > 999999) return;
+    if (score < 0) return;
+    if (score > 999999 && window.gameMode !== 'endless') return;
     const name = playerName || '名無し';
     const playTime = Math.floor((Date.now() - startTime) / 1000);
     const devId = getDeviceId();
