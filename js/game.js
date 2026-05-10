@@ -248,11 +248,11 @@ async function loadRanking(mode) {
     list.innerHTML = '<div style="color:#666;padding:20px;">読み込み中...</div>';
     const data = await fetchRanking(mode, 10);
     rankingFetching[mode] = false;
+    rankingCache[mode] = data || [];
     if (!data || data.length === 0) {
         list.innerHTML = '<div style="color:#666;padding:20px;">まだデータがありません</div>';
         return;
     }
-    rankingCache[mode] = data;
     renderRankingList(list, data);
 }
 
