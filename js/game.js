@@ -240,7 +240,11 @@ document.getElementById('ranking-submit-btn').addEventListener('click', async ()
 async function loadRanking(mode) {
     const list = document.getElementById('ranking-list');
     if (rankingCache[mode]) {
-        renderRankingList(list, rankingCache[mode]);
+        if (rankingCache[mode].length === 0) {
+            list.innerHTML = '<div style="color:#666;padding:20px;">まだデータがありません</div>';
+        } else {
+            renderRankingList(list, rankingCache[mode]);
+        }
         return;
     }
     if (rankingFetching[mode]) return;
