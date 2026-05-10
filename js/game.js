@@ -210,7 +210,7 @@ document.getElementById('ranking-submit-btn').addEventListener('click', async ()
     const mode = window.gameMode;
     const phase = getPhase();
     playerName = document.getElementById('player-name-input').value.trim();
-    if (!playerName) playerName = '名無し';
+    if (!playerName) playerName = t('result_name_default');
 
     const devId = getDeviceId();
     let storedScore = 0;
@@ -223,15 +223,15 @@ document.getElementById('ranking-submit-btn').addEventListener('click', async ()
     } catch(e) {}
 
     if (score <= storedScore) {
-        btn.textContent = 'ハイスコア更新なし';
+        btn.textContent = t('result_rank_noupdate');
         btn.disabled = true;
         playWarningSound();
-        setTimeout(() => { btn.textContent = 'ランキングに送信'; btn.disabled = false; }, 2000);
+        setTimeout(() => { btn.textContent = t('result_rank_submit'); btn.disabled = false; }, 2000);
         return;
     }
 
     await submitScore(score, mode, phase);
-    btn.textContent = '送信しました！';
+    btn.textContent = t('result_rank_sent');
     btn.disabled = true;
     playConfirmSound();
     await showResultRanking(score, mode);
