@@ -2,6 +2,8 @@ let currentLang = 'ja';
 
 const LANG = {
     ja: {
+        yes: 'はい',
+        no: 'いいえ',
         lang_ja: '日本語',
         lang_en: 'English',
         phase: 'フェーズ',
@@ -257,6 +259,8 @@ const LANG = {
         target_red: 'red',
     },
     en: {
+        yes: 'Yes',
+        no: 'No',
         lang_ja: '日本語',
         lang_en: 'English',
         phase: 'Phase',
