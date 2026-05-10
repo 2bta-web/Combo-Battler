@@ -148,18 +148,18 @@ function addPerfectStreak() {
     updateStreakDisplay();
     const mult = getStreakMultiplier(perfectStreak);
     const textMap = {
-        3: '3連続! +50%', 5: '5連続! +100%', 10: '10連続! +150%',
-        20: '20連続! +200%', 30: '30連続! +250%', 50: '50連続! +300%',
-        75: '75連続! +350%', 100: '100連続! +400%'
+        3: t('streak_3'), 5: t('streak_5'), 10: t('streak_10'),
+        20: t('streak_20'), 30: t('streak_30'), 50: t('streak_50'),
+        75: t('streak_75'), 100: t('streak_100')
     };
     const milestoneText = textMap[perfectStreak];
     if (perfectStreak >= 100 && (perfectStreak - 100) % 25 === 0) {
         const pct = Math.round(getStreakMultiplier(perfectStreak) * 100);
-        showStreakText(`${perfectStreak}連続! +${pct}%`, 'done');
+        showStreakText(tf('streak_custom', perfectStreak, pct), 'done');
     } else if (milestoneText) {
         showStreakText(milestoneText, 'done');
     } else if (perfectStreak === 2) {
-        showStreakText('あと1!', 'near');
+        showStreakText(t('streak_2'), 'near');
     }
     return mult;
 }
@@ -261,44 +261,43 @@ function getActiveUpgrades() {
         if (id === 13) return b.echo >= 0.40;
         return false;
     }
-    if (b.attackUp > 0) list.push(`攻撃力UP +${Math.round(b.attackUp * 100)}%`);
+    if (b.attackUp > 0) list.push(t('upgrade_attack') + ' +' + Math.round(b.attackUp * 100) + '%');
     if (b.criticalRate > 0) {
         const rate = b.criticalRate;
         const g = Math.floor(rate);
         const r = rate - g;
-        if (g === 0 || r === 0) list.push(`クリティカル ${Math.round(rate * 100)}%で${Math.pow(3, g + 1)}倍`);
-        else list.push(`クリティカル ${Math.round(rate * 100)}%（${Math.round(r * 100)}%で${Math.pow(3, g + 1)}倍）`);
+        if (g === 0 || r === 0) list.push(t('upgrade_crit') + ' ' + Math.round(rate * 100) + '% x' + Math.pow(3, g + 1));
+        else list.push(t('upgrade_crit') + ' ' + Math.round(rate * 100) + '% (' + Math.round(r * 100) + '% x' + Math.pow(3, g + 1) + ')');
     }
-    if (b.comboMultiplierUp > 0) list.push(`コンボ倍率UP (base+${b.comboMultiplierUp.toFixed(1)})${isMax(3) ? ' (max)' : ''}`);
-    if (b.targetSizeUp > 0) list.push(`ターゲット拡大 +${Math.round(b.targetSizeUp * 100)}%${isMax(4) ? ' (max)' : ''}`);
-    if (b.spawnTimeUp > 0) list.push(`余裕UP +${Math.round(b.spawnTimeUp * 100)}%${isMax(5) ? ' (max)' : ''}`);
-    if (b.scoreUp > 0) list.push(`スコアブースト +${Math.round(b.scoreUp * 100)}%`);
-    if (b.comboSafe > 0) list.push(`コンボセーフ 残${b.comboSafe * 3}`);
-    if (b.chain > 0) list.push(`チェイン +${b.chain}${isMax(8) ? ' (max)' : ''}`);
-    if (b.lucky > 0) list.push(`ラッキー ${Math.round(b.lucky * 100)}%追加ダメ${isMax(9) ? ' (max)' : ''}`);
-    if (b.finisher > 0) list.push(`フィニッシャー x${b.finisher}`);
+    if (b.comboMultiplierUp > 0) list.push(t('upgrade_combo') + ' (base+' + b.comboMultiplierUp.toFixed(1) + ')' + (isMax(3) ? ' (max)' : ''));
+    if (b.targetSizeUp > 0) list.push(t('upgrade_size') + ' +' + Math.round(b.targetSizeUp * 100) + '%' + (isMax(4) ? ' (max)' : ''));
+    if (b.spawnTimeUp > 0) list.push(t('upgrade_time') + ' +' + Math.round(b.spawnTimeUp * 100) + '%' + (isMax(5) ? ' (max)' : ''));
+    if (b.scoreUp > 0) list.push(t('upgrade_score') + ' +' + Math.round(b.scoreUp * 100) + '%');
+    if (b.comboSafe > 0) list.push(t('upgrade_safe') + ' x' + (b.comboSafe * 3));
+    if (b.chain > 0) list.push(t('upgrade_chain') + ' +' + b.chain + (isMax(8) ? ' (max)' : ''));
+    if (b.lucky > 0) list.push(t('upgrade_lucky') + ' ' + Math.round(b.lucky * 100) + '%' + (isMax(9) ? ' (max)' : ''));
+    if (b.finisher > 0) list.push(t('upgrade_finisher') + ' x' + b.finisher);
     if (b.doubleStrike > 0) {
         const rate = b.doubleStrike;
         const g = Math.floor(rate);
         const r = rate - g;
-        if (g === 0 || r === 0) list.push(`連撃 ${Math.round(rate * 100)}%で${Math.pow(2, g + 1)}倍`);
-        else list.push(`連撃 ${Math.round(rate * 100)}%（${Math.round(r * 100)}%で${Math.pow(2, g + 1)}倍）`);
+        if (g === 0 || r === 0) list.push(t('upgrade_ds') + ' ' + Math.round(rate * 100) + '% x' + Math.pow(2, g + 1));
+        else list.push(t('upgrade_ds') + ' ' + Math.round(rate * 100) + '% (' + Math.round(r * 100) + '% x' + Math.pow(2, g + 1) + ')');
     }
-    if (b.absorb > 0) list.push(`吸収 +${b.absorb}${isMax(12) ? ' (max)' : ''}`);
-    if (b.echo > 0) list.push(`エコー ${Math.round(b.echo * 100)}%で1.0倍${isMax(13) ? ' (max)' : ''}`);
-    if (b.barrier > 0) list.push(`障壁 x${b.barrier} (残${barrierCharges})`);
+    if (b.absorb > 0) list.push(t('upgrade_absorb') + ' +' + b.absorb + (isMax(12) ? ' (max)' : ''));
+    if (b.echo > 0) list.push(t('upgrade_echo') + ' ' + Math.round(b.echo * 100) + '%' + (isMax(13) ? ' (max)' : ''));
+    if (b.barrier > 0) list.push(t('upgrade_barrier') + ' x' + b.barrier + ' (' + barrierCharges + ')');
     if (b.aura > 0) {
         const stacks = Math.round(b.aura / 1.5);
         const currentBonus = getCombo() >= 10 ? Math.floor(getCombo() / 10) * b.aura : 0;
-        list.push(`オーラ x${stacks} (+${b.aura.toFixed(1)}/10Combo, 現在+${currentBonus.toFixed(1)})`);
+        list.push(t('upgrade_aura') + ' x' + stacks + ' (+' + b.aura.toFixed(1) + '/10, +' + currentBonus.toFixed(1) + ')');
     }
     return list;
 }
 
 function applyUpgrade(upgradeId, mult) {
     mult = mult || 1;
-    const names = { 1:'攻撃力UP', 2:'クリティカル', 3:'コンボ倍率UP', 4:'ターゲット拡大', 5:'余裕UP', 6:'スコアブースト', 7:'コンボセーフ', 8:'チェイン', 9:'ラッキー', 10:'フィニッシャー', 11:'連撃', 12:'吸収', 13:'エコー', 14:'障壁', 15:'オーラ' };
-    runUpgrades.push(names[upgradeId] || '強化' + upgradeId);
+    runUpgrades.push(upgradeId);
     switch(upgradeId) {
         case 1: addAttackUp(0.25 * mult); break;
         case 2: addCriticalRate(0.1 * mult); break;
@@ -341,6 +340,6 @@ function getRunUpgrades() { return runUpgrades; }
 function updateStreakDisplay() {
     const el = document.getElementById('streak-value');
     if (!el) return;
-    el.textContent = perfectStreak + ' Streak';
+    el.textContent = tf('streak_text', perfectStreak);
     el.style.color = '#ff6b6b';
 }

@@ -18,11 +18,11 @@
     <script>document.addEventListener('DOMContentLoaded',()=>{const s=document.getElementById('loading-splash');if(s)s.style.display='none';});</script>
     <div id="game-container">
         <div id="phase-area">
-            <span class="info-label">フェーズ</span>
+            <span class="info-label" data-i18n="phase">フェーズ</span>
             <span id="phase-display">1 / 10</span>
         </div>
         <div id="score-area">
-            <span class="info-label">スコア</span>
+            <span class="info-label" data-i18n="score">スコア</span>
             <span id="score-display">0</span>
         </div>
 
@@ -57,37 +57,37 @@
         <div id="fever-timer" class="hidden"><span id="fever-timer-text"></span></div>
 
         <div id="pause-overlay" class="hidden">
-            <div id="pause-text">一時停止中</div>
-            <div id="pause-resume-btn">再開</div>
+            <div id="pause-text" data-i18n="pause_title">一時停止中</div>
+            <div id="pause-resume-btn" data-i18n="resume">再開</div>
             <div class="pause-tabs">
-                <div class="pause-tab active" data-tab="upgrades">強化</div>
-                <div class="pause-tab" data-tab="settings">設定</div>
+                <div class="pause-tab active" data-tab="upgrades" data-i18n="tab_upgrades">強化</div>
+                <div class="pause-tab" data-tab="settings" data-i18n="tab_settings">設定</div>
             </div>
             <div class="pause-tab-content active" id="pause-tab-upgrades">
                 <div id="pause-upgrade-section">
-                    <div id="pause-upgrade-label">取得済み強化</div>
+                    <div id="pause-upgrade-label" data-i18n="result_upgrades">取得済み強化</div>
                     <div id="pause-upgrade-list"></div>
                 </div>
             </div>
             <div class="pause-tab-content" id="pause-tab-settings">
                 <div class="pause-volume-row">
-                    <span>音量</span>
+                    <span data-i18n="vol_label">音量</span>
                     <input type="range" id="pause-volume" min="0" max="300" value="100">
                     <span id="pause-volume-label">100</span>
                 </div>
                 <div class="pause-volume-row">
-                    <span>画面揺れ</span>
+                    <span data-i18n="shake_label">画面揺れ</span>
                     <div class="toggle-group" id="pause-shake">
-                        <span class="toggle-option" data-value="strong">強</span>
-                        <span class="toggle-option" data-value="weak">弱</span>
-                        <span class="toggle-option" data-value="off">切</span>
+                        <span class="toggle-option" data-value="strong" data-i18n="shake_strong">強</span>
+                        <span class="toggle-option" data-value="weak" data-i18n="shake_weak">弱</span>
+                        <span class="toggle-option" data-value="off" data-i18n="shake_off">切</span>
                     </div>
                 </div>
             </div>
             <div class="pause-volume-row">
-                <button id="pause-layout-btn">レイアウト編集</button>
+                <button id="pause-layout-btn" data-i18n="layout_edit">レイアウト編集</button>
             </div>
-            <div id="pause-retire-btn">リタイア</div>
+            <div id="pause-retire-btn" data-i18n="retire">リタイア</div>
         </div>
 
         <div id="text-box">
@@ -104,74 +104,74 @@
         <div id="result-screen" class="hidden">
             <div class="result-header">
                 <div class="result-title" id="result-title">ゲームオーバー</div>
-                <div class="result-newrecord hidden" id="new-record">★ ニューレコード!</div>
+                <div class="result-newrecord hidden" id="new-record" data-i18n="result_new_record">★ ニューレコード!</div>
             </div>
             <div class="result-meta">
-                <span>モード: <span id="result-mode-display">Standard</span></span>
+                <span><span data-i18n="result_mode">モード</span>: <span id="result-mode-display">Standard</span></span>
                 <span class="meta-sep">|</span>
-                <span>フェーズ <span id="final-phase">1 / 10</span></span>
+                <span><span data-i18n="result_phase">フェーズ</span> <span id="final-phase">1 / 10</span></span>
                 <span class="meta-sep">|</span>
                 <span id="playtime-value">00:00</span>
             </div>
             <div class="result-scores">
                 <div class="final-score" id="final-score">0</div>
-                <div class="hs-label">ハイスコア: <span id="highscore-value">0</span></div>
+                <div class="hs-label"><span data-i18n="result_highscore">ハイスコア</span>: <span id="highscore-value">0</span></div>
             </div>
             <div class="result-name-row">
-                <span>名前: </span>
-                <input type="text" id="player-name-input" maxlength="10" placeholder="名無し">
-                <button id="ranking-submit-btn">ランキングに送信</button>
+                <span data-i18n="result_name_label">名前</span>: 
+                <input type="text" id="player-name-input" maxlength="10" data-i18n="result_name_placeholder">
+                <button id="ranking-submit-btn" data-i18n="result_rank_submit">ランキングに送信</button>
             </div>
             <div class="result-breakdown" id="result-breakdown">
-                <div class="result-bd-row">合計ダメ: <span id="bd-damage-total">0</span></div>
+                <div class="result-bd-row"><span data-i18n="result_dmg_total">合計ダメ</span>: <span id="bd-damage-total">0</span></div>
                 <div class="result-bd-toggle" id="bd-toggle">[詳細▼]</div>
                 <div id="bd-detail" class="hidden">
-                    <div class="bd-section-title">ダメージ内訳</div>
+                    <div class="bd-section-title" data-i18n="result_dmg_title">ダメージ内訳</div>
                     <div class="bd-grid">
-                        <span>基本: <span id="bd-base">0</span></span>
-                        <span>クリティカル: <span id="bd-crit">0</span></span>
-                        <span>連撃: <span id="bd-ds">0</span></span>
-                        <span>エコー: <span id="bd-echo">0</span></span>
-                        <span>ラッキー: <span id="bd-lucky">0</span></span>
-                        <span>ストリーク: <span id="bd-streak">0</span></span>
+                        <span><span data-i18n="result_base">基本</span>: <span id="bd-base">0</span></span>
+                        <span><span data-i18n="result_crit">クリティカル</span>: <span id="bd-crit">0</span></span>
+                        <span><span data-i18n="result_ds">連撃</span>: <span id="bd-ds">0</span></span>
+                        <span><span data-i18n="result_echo">エコー</span>: <span id="bd-echo">0</span></span>
+                        <span><span data-i18n="result_lucky">ラッキー</span>: <span id="bd-lucky">0</span></span>
+                        <span><span data-i18n="result_streak">ストリーク</span>: <span id="bd-streak">0</span></span>
                     </div>
-                    <div class="bd-section-title">スコア内訳</div>
+                    <div class="bd-section-title" data-i18n="result_score_title">スコア内訳</div>
                     <div class="bd-grid">
-                        <span>与ダメ: <span id="bd-damage">0</span></span>
-                        <span>フィーバー: <span id="bd-fever">0</span></span>
-                        <span>チェイン: <span id="bd-chain">0</span></span>
-                        <span>吸収: <span id="bd-absorb">0</span></span>
-                        <span>フィニッシャー: <span id="bd-finisher">0</span></span>
+                        <span><span data-i18n="result_dmg_score">与ダメ</span>: <span id="bd-damage">0</span></span>
+                        <span><span data-i18n="result_fever">フィーバー</span>: <span id="bd-fever">0</span></span>
+                        <span><span data-i18n="result_chain">チェイン</span>: <span id="bd-chain">0</span></span>
+                        <span><span data-i18n="result_absorb">吸収</span>: <span id="bd-absorb">0</span></span>
+                        <span><span data-i18n="result_finisher">フィニッシャー</span>: <span id="bd-finisher">0</span></span>
                     </div>
                 </div>
             </div>
             <div id="result-ranking" class="hidden">
-                <div class="ranking-section-title">ランキング</div>
+                <div class="ranking-section-title" data-i18n="result_rank_section">ランキング</div>
                 <div id="result-ranking-list"></div>
                 <div id="result-myrank"></div>
             </div>
             <div class="result-stats-grid">
-                <span>Perfect: <span id="stat-perfect">0</span></span>
-                <span>Good: <span id="stat-good">0</span></span>
-                <span>OK: <span id="stat-ok">0</span></span>
-                <span>Miss: <span id="stat-miss">0</span></span>
-                <span>Early: <span id="stat-early">0</span></span>
-                <span>精度: <span id="stat-accuracy">-</span></span>
-                <span>最大コンボ: <span id="stat-maxcombo">0</span></span>
-                <span>最大ストリーク: <span id="stat-maxstreak">0</span></span>
-                <span>🟦青: <span id="stat-blue">0</span></span>
-                <span>🟪紫: <span id="stat-purple">0</span></span>
-                <span>🟨金: <span id="stat-gold">0</span></span>
-                <span>🟥赤: <span id="stat-red">0</span></span>
+                <span><span data-i18n="stat_perfect">Perfect</span>: <span id="stat-perfect">0</span></span>
+                <span><span data-i18n="stat_good">Good</span>: <span id="stat-good">0</span></span>
+                <span><span data-i18n="stat_ok">OK</span>: <span id="stat-ok">0</span></span>
+                <span><span data-i18n="stat_miss">Miss</span>: <span id="stat-miss">0</span></span>
+                <span><span data-i18n="stat_early">Early</span>: <span id="stat-early">0</span></span>
+                <span><span data-i18n="stat_accuracy">精度</span>: <span id="stat-accuracy">-</span></span>
+                <span><span data-i18n="stat_max_combo">最大コンボ</span>: <span id="stat-maxcombo">0</span></span>
+                <span><span data-i18n="stat_max_streak">最大ストリーク</span>: <span id="stat-maxstreak">0</span></span>
+                <span><span data-i18n="stat_blue">🟦青</span>: <span id="stat-blue">0</span></span>
+                <span><span data-i18n="stat_purple">🟪紫</span>: <span id="stat-purple">0</span></span>
+                <span><span data-i18n="stat_gold">🟨金</span>: <span id="stat-gold">0</span></span>
+                <span><span data-i18n="stat_red">🟥赤</span>: <span id="stat-red">0</span></span>
             </div>
             <div class="result-upgrades">
-                <div class="result-section-title">取得強化</div>
+                <div class="result-section-title" data-i18n="result_upgrades">取得強化</div>
                 <div id="result-upgrade-list"></div>
             </div>
             <div class="result-buttons">
-                <button id="restart-btn">もう一度</button>
-                <button id="tweet-btn">X(旧Twitter)で共有</button>
-                <button id="title-btn">タイトルに戻る</button>
+                <button id="restart-btn" data-i18n="btn_restart">もう一度</button>
+                <button id="tweet-btn" data-i18n="btn_tweet">X(旧Twitter)で共有</button>
+                <button id="title-btn" data-i18n="btn_title">タイトルに戻る</button>
             </div>
         </div>
 
@@ -181,93 +181,97 @@
             <button id="achievements-btn">実績</button>
             <div id="settings-btn">設定</div>
             <button id="tutorial-btn">チュートリアル</button>
-            <div class="start-title">コンボローグストライク</div>
-            <div class="start-subtitle">タイミングよく撃て！</div>
-            <div class="mode-select-title">モードを選べ</div>
+            <div class="start-title" data-i18n="start_title">コンボローグストライク</div>
+            <div class="start-subtitle" data-i18n="start_sub">タイミングよく撃て！</div>
+            <div class="mode-select-title" data-i18n="select_mode">モードを選べ</div>
             <div class="mode-buttons">
                 <div class="mode-btn" data-mode="standard">
-                    <div class="mode-btn-name">Standard</div>
-                    <div class="mode-btn-desc">10フェーズ 標準難易度</div>
+                    <div class="mode-btn-name" data-i18n="mode_std">Standard</div>
+                    <div class="mode-btn-desc" data-i18n="mode_std_desc">10フェーズ 標準難易度</div>
                 </div>
                 <div class="mode-btn" data-mode="hard">
-                    <div class="mode-btn-name">Hard</div>
-                    <div class="mode-btn-desc">10フェーズ<br>超速タイミング・小型</div>
+                    <div class="mode-btn-name" data-i18n="mode_hard">Hard</div>
+                    <div class="mode-btn-desc" data-i18n-html="mode_hard_desc">10フェーズ<br>超速タイミング・小型</div>
                 </div>
                 <div class="mode-btn" data-mode="endless">
-                    <div class="mode-btn-name">Endless</div>
-                    <div class="mode-btn-desc">上限なし スコアアタック</div>
+                    <div class="mode-btn-name" data-i18n="mode_endless">Endless</div>
+                    <div class="mode-btn-desc" data-i18n="mode_endless_desc">上限なし スコアアタック</div>
                 </div>
             </div>
             <div class="start-highscore">
-                <span>Standard: <span id="hs-standard">0</span></span>
+                <span><span data-i18n="hs_std">Standard</span>: <span id="hs-standard">0</span></span>
                 <span class="hs-sep">|</span>
-                <span>Hard: <span id="hs-hard">0</span></span>
+                <span><span data-i18n="hs_hard">Hard</span>: <span id="hs-hard">0</span></span>
                 <span class="hs-sep">|</span>
-                <span>Endless: <span id="hs-endless">0</span></span>
+                <span><span data-i18n="hs_endless">Endless</span>: <span id="hs-endless">0</span></span>
             </div>
             <div class="start-tutorial">
-                <div>Space / Enter / 左クリック: 攻撃 &nbsp;|&nbsp; Esc: ポーズ</div>
-                <div>📱 タップ: 攻撃 &nbsp;|&nbsp; ⏸: ポーズ</div>
-                <div style="margin-top:10px;font-size:21px;color:#555;">※タブレットはレイアウト編集推奨 &nbsp;|&nbsp; スマホ非対応</div>
+                <div data-i18n-html="controls_hint">Space / Enter / 左クリック: 攻撃 &nbsp;|&nbsp; Esc: ポーズ</div>
+                <div data-i18n-html="mobile_hint">📱 タップ: 攻撃 &nbsp;|&nbsp; ⏸: ポーズ</div>
+                <div style="margin-top:10px;font-size:21px;color:#555;" data-i18n-html="tablet_note">※タブレットはレイアウト編集推奨 &nbsp;|&nbsp; スマホ非対応</div>
             </div>
-            <div class="start-version">v1.0.0</div>
+            <div class="start-version" data-i18n="version">v1.0.0</div>
+            <div class="lang-buttons">
+                <span class="lang-btn" id="lang-ja" data-lang="ja">日本語</span>
+                <span class="lang-btn" id="lang-en" data-lang="en">English</span>
+            </div>
         </div>
 
         <div id="settings-modal" class="hidden">
-            <div class="settings-title">設定</div>
+            <div class="settings-title" data-i18n="settings_title">設定</div>
             <div class="settings-row">
-                <span>音量</span>
+                <span data-i18n="vol_label">音量</span>
                 <input type="range" id="settings-volume" min="0" max="300" value="100">
                 <span id="settings-volume-label">100</span>
             </div>
             <div class="settings-row">
-                <span>画面揺れ</span>
+                <span data-i18n="shake_label">画面揺れ</span>
                 <div class="toggle-group" id="settings-shake">
-                    <span class="toggle-option" data-value="strong">強</span>
-                    <span class="toggle-option" data-value="weak">弱</span>
-                    <span class="toggle-option" data-value="off">切</span>
+                    <span class="toggle-option" data-value="strong" data-i18n="shake_strong">強</span>
+                    <span class="toggle-option" data-value="weak" data-i18n="shake_weak">弱</span>
+                    <span class="toggle-option" data-value="off" data-i18n="shake_off">切</span>
                 </div>
             </div>
-            <button id="settings-layout-btn">レイアウト編集</button>
-            <button id="settings-clear-data">データをすべて消去</button>
-            <button id="settings-close">閉じる</button>
+            <button id="settings-layout-btn" data-i18n="layout_edit">レイアウト編集</button>
+            <button id="settings-clear-data" data-i18n="settings_clear">データをすべて消去</button>
+            <button id="settings-close" data-i18n="settings_close">閉じる</button>
         </div>
 
         <div id="ranking-modal" class="hidden">
-            <div class="ranking-title">ランキング</div>
+            <div class="ranking-title" data-i18n="ranking_title">ランキング</div>
             <div class="ranking-tabs">
                 <span class="ranking-tab active" data-rank-mode="standard">Standard</span>
                 <span class="ranking-tab" data-rank-mode="hard">Hard</span>
                 <span class="ranking-tab" data-rank-mode="endless">Endless</span>
             </div>
             <div id="ranking-list"></div>
-            <button id="ranking-close">閉じる</button>
+            <button id="ranking-close" data-i18n="ranking_close">閉じる</button>
         </div>
 
         <div id="tutorial-modal" class="hidden">
-            <div class="tutorial-title">チュートリアル</div>
+            <div class="tutorial-title" data-i18n="tutorial_title">チュートリアル</div>
             <div class="tutorial-body">
                 <div class="tutorial-section">
-                    <div class="tutorial-section-title">操作</div>
-                    <div>Space / Enter / 左クリック → 攻撃（マウス位置のターゲットを狙う）</div>
-                    <div>Esc → ポーズ</div>
+                    <div class="tutorial-section-title" data-i18n="ctrl_title">操作</div>
+                    <div data-i18n="ctrl_1">Space / Enter / 左クリック → 攻撃（マウス位置のターゲットを狙う）</div>
+                    <div data-i18n="ctrl_2">Esc → ポーズ</div>
                 </div>
                 <div class="tutorial-section">
-                    <div class="tutorial-section-title">判定</div>
-                    <div>Perfect (<span class="t-gold">×1.5</span>) → リングが重なるタイミング</div>
-                    <div>Good (<span class="t-white">×1.0</span>)</div>
-                    <div>OK (<span class="t-blue">×0.6</span>)</div>
-                    <div>Early (ダメージ0)</div>
+                    <div class="tutorial-section-title" data-i18n="judge_title">判定</div>
+                    <div data-i18n-html="judge_perfect">Perfect (<span class="t-gold">×1.5</span>) → リングが重なるタイミング</div>
+                    <div data-i18n-html="judge_good">Good (<span class="t-white">×1.0</span>)</div>
+                    <div data-i18n-html="judge_ok">OK (<span class="t-blue">×0.6</span>)</div>
+                    <div data-i18n-html="judge_early">Early (ダメージ0)</div>
                 </div>
                 <div class="tutorial-section">
-                    <div class="tutorial-section-title">システム</div>
-                    <div>コンボを繋ぐ → ダメージ増加</div>
-                    <div>15コンボ → FEVER発動（30秒間スコア2倍）</div>
-                    <div>色付きターゲット（紫/金/赤）が出現</div>
-                    <div>フェーズクリア → 強化を選択</div>
+                    <div class="tutorial-section-title" data-i18n="sys_title">システム</div>
+                    <div data-i18n="sys_1">コンボを繋ぐ → ダメージ増加</div>
+                    <div data-i18n="sys_2">15コンボ → FEVER発動（30秒間スコア2倍）</div>
+                    <div data-i18n="sys_3">色付きターゲット（紫/金/赤）が出現</div>
+                    <div data-i18n="sys_4">フェーズクリア → 強化を選択</div>
                 </div>
             </div>
-            <button id="tutorial-close">閉じる</button>
+            <button id="tutorial-close" data-i18n="close">閉じる</button>
         </div>
 
         <div id="layout-editor" class="hidden">
@@ -280,22 +284,22 @@
         </div>
 
         <div id="stats-modal" class="hidden">
-            <div class="stats-title">累計統計</div>
+            <div class="stats-title" data-i18n="stats_title">累計統計</div>
             <div class="stats-body">
-                <div class="stat-row">総プレイ回数: <span id="stat-plays">0</span></div>
-                <div class="stat-row">総ヒット数: <span id="stat-totalhits">0</span></div>
-                <div class="stat-row">総スコア: <span id="stat-totalscore">0</span></div>
-                <div class="stat-row">総プレイ時間: <span id="stat-totaltime">00:00</span></div>
-                <div class="stat-row">最高コンボ: <span id="stat-bestcombo">0</span></div>
-                <div class="stat-row">最高ストリーク: <span id="stat-beststreak">0</span></div>
+                <div class="stat-row"><span data-i18n="stat_plays">総プレイ回数</span>: <span id="stat-plays">0</span></div>
+                <div class="stat-row"><span data-i18n="stat_hits">総ヒット数</span>: <span id="stat-totalhits">0</span></div>
+                <div class="stat-row"><span data-i18n="stat_score_total">総スコア</span>: <span id="stat-totalscore">0</span></div>
+                <div class="stat-row"><span data-i18n="stat_time">総プレイ時間</span>: <span id="stat-totaltime">00:00</span></div>
+                <div class="stat-row"><span data-i18n="stat_best_combo">最高コンボ</span>: <span id="stat-bestcombo">0</span></div>
+                <div class="stat-row"><span data-i18n="stat_best_streak">最高ストリーク</span>: <span id="stat-beststreak">0</span></div>
             </div>
-            <button id="stats-close">閉じる</button>
+            <button id="stats-close" data-i18n="stats_close">閉じる</button>
         </div>
 
         <div id="achievements-modal" class="hidden">
-            <div class="achievements-title">実績</div>
+            <div class="achievements-title" data-i18n="ach_title">実績</div>
             <div id="achievements-list"></div>
-            <button id="achievements-close">閉じる</button>
+            <button id="achievements-close" data-i18n="ach_close">閉じる</button>
         </div>
 
         <div id="confirm-modal" class="hidden">
@@ -317,6 +321,7 @@
     <script src="js/particles.js"></script>
     <script src="js/targets.js"></script>
     <script src="js/phase.js"></script>
+    <script src="js/lang.js"></script>
     <script src="js/game.js"></script>
 </body>
 </html>

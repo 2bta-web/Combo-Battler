@@ -29,7 +29,7 @@ let confirmCallback = null;
 
 document.getElementById('pause-retire-btn').addEventListener('click', () => {
     playWarningSound();
-    showConfirmModal('リタイアしますか？', () => retireGame());
+    showConfirmModal(t('retire_confirm'), () => retireGame());
 });
 document.getElementById('confirm-yes').addEventListener('click', () => {
     playConfirmSound();
@@ -65,7 +65,7 @@ function shareTweet() {
     const score = getScore().toLocaleString();
     const mode = getModeLabel();
     const phase = getPhase();
-    const text = `コンボローグストライク\n${mode} モード ${score}点！\n到達フェーズ: ${phase}\n\n#コンボローグストライク`;
+    const text = tf('share_text', mode, score, phase);
     const url = 'https://2bta-web.github.io/Combo-Battler/';
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
 }
@@ -130,8 +130,8 @@ document.getElementById('settings-btn').addEventListener('click', () => {
 document.getElementById('settings-close').addEventListener('click', () => { playCloseSound(); SETTINGS_MODAL.classList.add('hidden'); });
 document.getElementById('settings-clear-data').addEventListener('click', () => {
     playWarningSound();
-    showConfirmModal('ハイスコア・累計統計・実績・設定・レイアウトをすべて消去します。よろしいですか？', () => {
-        showConfirmModal('本当に消去しますか？この操作は元に戻せません。', () => {
+    showConfirmModal(t('clear_confirm'), () => {
+        showConfirmModal(t('clear_confirm2'), () => {
             localStorage.removeItem('comboBattlerVolume');
             localStorage.removeItem('comboBattlerShake');
             localStorage.removeItem('comboBattlerLayout');
@@ -241,7 +241,7 @@ async function loadRanking(mode) {
     const list = document.getElementById('ranking-list');
     if (rankingCache[mode]) {
         if (rankingCache[mode].length === 0) {
-            list.innerHTML = '<div style="color:#666;padding:20px;">まだデータがありません</div>';
+            list.innerHTML = '<div style="color:#666;padding:20px;">' + t('rank_empty') + '</div>';
         } else {
             renderRankingList(list, rankingCache[mode]);
         }
@@ -249,12 +249,12 @@ async function loadRanking(mode) {
     }
     if (rankingFetching[mode]) return;
     rankingFetching[mode] = true;
-    list.innerHTML = '<div style="color:#666;padding:20px;">読み込み中...</div>';
+    list.innerHTML = '<div style="color:#666;padding:20px;">' + t('rank_loading') + '</div>';
     const data = await fetchRanking(mode, 10);
     rankingFetching[mode] = false;
     rankingCache[mode] = data || [];
     if (!data || data.length === 0) {
-        list.innerHTML = '<div style="color:#666;padding:20px;">まだデータがありません</div>';
+        list.innerHTML = '<div style="color:#666;padding:20px;">' + t('rank_empty') + '</div>';
         return;
     }
     renderRankingList(list, data);
@@ -277,7 +277,7 @@ async function showResultRanking(score, mode) {
     const list = document.getElementById('result-ranking-list');
     const myrank = document.getElementById('result-myrank');
     el.classList.remove('hidden');
-    list.innerHTML = '<span style="color:#666;">読み込み中...</span>';
+    list.innerHTML = '<span style="color:#666;">' + t('rank_loading') + '</span>';
     myrank.textContent = '';
     const cacheKey = 'result_' + mode;
     if (rankingCache[cacheKey]) {
@@ -289,7 +289,7 @@ async function showResultRanking(score, mode) {
     const data = await fetchRanking(mode, 5);
     rankingFetching[cacheKey] = false;
     if (!data || data.length === 0) {
-        list.innerHTML = '<span style="color:#555;">まだデータがありません</span>';
+        list.innerHTML = '<span style="color:#555;">' + t('rank_no_data') + '</span>';
         return;
     }
     rankingCache[cacheKey] = data;
@@ -308,10 +308,10 @@ function renderResultRanking(list, myrank, data, score, mode) {
         list.appendChild(d);
     });
     if (myPos > 0) {
-        myrank.textContent = 'あなたの順位: ' + myPos + '位';
+        myrank.textContent = t('result_myrank') + ': ' + myPos + t('result_rank');
     } else {
         fetchMyRank(score, mode).then(rank => {
-            if (rank > 0) myrank.textContent = 'あなたの順位: ' + rank + '位';
+            if (rank > 0) myrank.textContent = t('result_myrank') + ': ' + rank + t('result_rank');
         });
     }
 }
@@ -324,21 +324,21 @@ function escHtml(s) {
 
 // 実績定義
 const ACHIEVEMENTS = [
-    { id: 1, name: '初プレイ', desc: 'ゲームを1回プレイ', check: s => s.plays >= 1 },
-    { id: 2, name: 'コンボ10', desc: 'コンボ10達成', check: s => s.bestCombo >= 10 },
-    { id: 3, name: 'コンボ50', desc: 'コンボ50達成', check: s => s.bestCombo >= 50 },
-    { id: 4, name: 'コンボ100', desc: 'コンボ100達成', check: s => s.bestCombo >= 100 },
-    { id: 5, name: 'ストリーク10', desc: 'Perfectストリーク10達成', check: s => s.bestStreak >= 10 },
-    { id: 6, name: 'ストリーク30', desc: 'Perfectストリーク30達成', check: s => s.bestStreak >= 30 },
-    { id: 7, name: 'FEVER!', desc: '初めてFEVER発動', check: s => s.feverCount >= 1 },
-    { id: 8, name: 'ボス撃破', desc: '初めてボスを倒す', check: s => s.bossDefeats >= 1 },
-    { id: 9, name: 'Standardクリア', desc: 'Standardモードクリア', check: s => s.clearStandard },
-    { id: 10, name: 'Hardクリア', desc: 'Hardモードクリア', check: s => s.clearHard },
-    { id: 11, name: 'スコア10000', desc: '1回のプレイで10000点達成', check: s => s.maxScore >= 10000 },
-    { id: 12, name: 'スコア50000', desc: '1回のプレイで50000点達成', check: s => s.maxScore >= 50000 },
-    { id: 13, name: '全モードクリア', desc: 'Standard + Hard両方クリア', check: s => s.clearStandard && s.clearHard },
-    { id: 14, name: '強化コレクター', desc: '15種全ての強化を獲得', check: s => s.allUpgrades },
-    { id: 15, name: 'パーフェクトラウンド', desc: '1フェーズを全Perfectでクリア', check: s => s.perfectRound >= 1 },
+    { id: 1, name: () => t('ach_1'), desc: () => t('ach_1_desc'), check: s => s.plays >= 1 },
+    { id: 2, name: () => t('ach_2'), desc: () => t('ach_2_desc'), check: s => s.bestCombo >= 10 },
+    { id: 3, name: () => t('ach_3'), desc: () => t('ach_3_desc'), check: s => s.bestCombo >= 50 },
+    { id: 4, name: () => t('ach_4'), desc: () => t('ach_4_desc'), check: s => s.bestCombo >= 100 },
+    { id: 5, name: () => t('ach_5'), desc: () => t('ach_5_desc'), check: s => s.bestStreak >= 10 },
+    { id: 6, name: () => t('ach_6'), desc: () => t('ach_6_desc'), check: s => s.bestStreak >= 30 },
+    { id: 7, name: () => t('ach_7'), desc: () => t('ach_7_desc'), check: s => s.feverCount >= 1 },
+    { id: 8, name: () => t('ach_8'), desc: () => t('ach_8_desc'), check: s => s.bossDefeats >= 1 },
+    { id: 9, name: () => t('ach_9'), desc: () => t('ach_9_desc'), check: s => s.clearStandard },
+    { id: 10, name: () => t('ach_10'), desc: () => t('ach_10_desc'), check: s => s.clearHard },
+    { id: 11, name: () => t('ach_11'), desc: () => t('ach_11_desc'), check: s => s.maxScore >= 10000 },
+    { id: 12, name: () => t('ach_12'), desc: () => t('ach_12_desc'), check: s => s.maxScore >= 50000 },
+    { id: 13, name: () => t('ach_13'), desc: () => t('ach_13_desc'), check: s => s.clearStandard && s.clearHard },
+    { id: 14, name: () => t('ach_14'), desc: () => t('ach_14_desc'), check: s => s.allUpgrades },
+    { id: 15, name: () => t('ach_15'), desc: () => t('ach_15_desc'), check: s => s.perfectRound >= 1 },
 ];
 
 function getStats() {
@@ -369,8 +369,7 @@ function updateStatsEnd(score, mode, time) {
     if (mode === 'hard' && window.gameCleared) s.clearHard = true;
     const runUps = getRunUpgrades ? getRunUpgrades() : [];
     let allIds = new Set(s.collectedUpgrades || []);
-    const idMap = { '攻撃力UP':1,'クリティカル':2,'コンボ倍率UP':3,'ターゲット拡大':4,'余裕UP':5,'スコアブースト':6,'コンボセーフ':7,'チェイン':8,'ラッキー':9,'フィニッシャー':10,'連撃':11,'吸収':12,'エコー':13,'障壁':14,'オーラ':15 };
-    runUps.forEach(name => { const id = idMap[name]; if (id) allIds.add(id); });
+    runUps.forEach(id => { if (id) allIds.add(id); });
     s.collectedUpgrades = [...allIds];
     s.allUpgrades = allIds.size >= 15;
     saveStats(s);
@@ -385,7 +384,7 @@ function checkAchievements() {
     ACHIEVEMENTS.forEach(a => {
         if (!unlocked[a.id] && a.check(stats)) {
             unlocked[a.id] = true;
-            queue.push(a.name);
+            queue.push(a.name());
         }
     });
     if (queue.length > 0) {
@@ -405,7 +404,7 @@ function checkAchievements() {
 function showAchievementPopup(name) {
     const popup = document.createElement('div');
     popup.className = 'ach-popup';
-    popup.innerHTML = '<div class="achp-title">実績解除!</div><div class="achp-name">' + escHtml(name) + '</div>';
+    popup.innerHTML = '<div class="achp-title">' + t('ach_popup_title') + '</div><div class="achp-name">' + escHtml(name) + '</div>';
     document.body.appendChild(popup);
     setTimeout(() => popup.remove(), 2100);
 }
@@ -417,7 +416,7 @@ function loadStats() {
     document.getElementById('stat-totalscore').textContent = (s.totalScore || 0).toLocaleString();
     const mins = Math.floor((s.totalTime || 0) / 60);
     const secs = (s.totalTime || 0) % 60;
-    document.getElementById('stat-totaltime').textContent = mins + '分' + secs + '秒';
+    document.getElementById('stat-totaltime').textContent = tf('min_format', mins, secs);
     document.getElementById('stat-bestcombo').textContent = s.bestCombo || 0;
     document.getElementById('stat-beststreak').textContent = s.bestStreak || 0;
 }
@@ -430,7 +429,7 @@ function loadAchievements() {
     ACHIEVEMENTS.forEach(a => {
         const d = document.createElement('div');
         d.className = 'ach-entry' + (unlocked[a.id] ? '' : ' locked');
-        d.innerHTML = '<span class="ach-icon">' + (unlocked[a.id] ? '★' : '☆') + '</span><span class="ach-name">' + escHtml(a.name) + '</span><span class="ach-desc" style="color:#666;font-size:13px;">' + escHtml(a.desc) + '</span>';
+        d.innerHTML = '<span class="ach-icon">' + (unlocked[a.id] ? '★' : '☆') + '</span><span class="ach-name">' + escHtml(a.name()) + '</span><span class="ach-desc" style="color:#666;font-size:13px;">' + escHtml(a.desc()) + '</span>';
         list.appendChild(d);
     });
 }
@@ -459,6 +458,9 @@ document.getElementById('pause-shake').addEventListener('click', (e) => {
     try { localStorage.setItem('comboBattlerShake', opt.dataset.value); } catch(ex) {}
 });
 
+document.getElementById('lang-ja').addEventListener('click', () => setLang('ja'));
+document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
+
 START_SCREEN.addEventListener('click', (e) => {
     const btn = e.target.closest('.mode-btn');
     if (btn) {
@@ -482,9 +484,9 @@ function startGame(mode) {
     initGame();
     applyLayout();
 
-    const msgs = { standard: '10フェーズ 標準難易度', hard: '10フェーズ 超速タイミング', endless: '上限なし スコアアタック' };
+    const msgs = { standard: t('msg_start_std'), hard: t('msg_start_hard'), endless: t('msg_start_endless') };
     showText(msgs[mode]);
-    addLog(`【${getModeLabel()}】開始！`);
+    addLog(t('log_start_' + mode));
     resumeAudio();
     playGameStartSound();
     updateStatsPlay();
@@ -493,8 +495,8 @@ function startGame(mode) {
 }
 
 function getModeLabel() {
-    const map = { standard: 'Standard', hard: 'Hard', endless: 'Endless' };
-    return map[window.gameMode] || 'Standard';
+    const map = { standard: t('mode_std'), hard: t('mode_hard'), endless: t('mode_endless') };
+    return map[window.gameMode] || t('mode_std');
 }
 
 function initGame() {
@@ -577,7 +579,7 @@ function pauseGame() {
     const el = document.getElementById('pause-upgrade-list');
     el.innerHTML = '';
     if (list.length === 0) {
-        el.innerHTML = '<div class="upgrade-item dim">まだ強化なし</div>';
+        el.innerHTML = '<div class="upgrade-item dim">' + t('paused_no_upgrades') + '</div>';
     } else {
         list.forEach(u => {
             const d = document.createElement('div');
@@ -627,7 +629,7 @@ window.onTargetHit = function(judgment, targetType) {
     const baseDmg = getBaseDamage() * (judgmentMultiplier[judgment] || 0) * typeDamageMultiplier;
     if (baseDmg <= 0) {
         stats.early++;
-        addLog('Early! ダメージなし');
+        addLog(t('log_early'));
         playMissSound();
         updateCombatInfo();
         resetPerfectStreak();
@@ -644,7 +646,7 @@ window.onTargetHit = function(judgment, targetType) {
         actualDamage = Math.floor(actualDamage * critMult);
         isCritical = true;
         scoreBreakdown.crit += actualDamage - preCritDmg;
-        addLog('クリティカル!');
+        addLog(t('log_crit'));
     }
 
     scoreBreakdown.base += preCritDmg;
@@ -671,7 +673,8 @@ window.onTargetHit = function(judgment, targetType) {
         stats.maxCombo = Math.max(stats.maxCombo, getCombo());
         playPerfectSound();
         screenShake();
-        addLog(`Perfect! ${actualDamage}ダメージ コンボ${combo}${targetType !== 'normal' ? ' [' + targetType + ']' : ''}`);
+        const targetSuffix = targetType !== 'normal' ? ' [' + targetType + ']' : '';
+        addLog(tf('log_perfect', actualDamage, combo, targetSuffix));
 
         const streakMult = addPerfectStreak();
         stats.maxStreak = Math.max(stats.maxStreak, getPerfectStreak());
@@ -683,14 +686,14 @@ window.onTargetHit = function(judgment, targetType) {
             addScore(Math.floor(bonus * scoreMult));
             scoreBreakdown.damage += streakScoreNoFever;
             if (isFever()) scoreBreakdown.feverBonus += Math.floor(bonus * scoreMult) - streakScoreNoFever;
-            addLog(`＋${bonus} ストリークボーナス!`);
+            addLog(tf('log_streak', bonus));
             if (getEnemyHPPercent() <= 0) { enemyDefeated(); return; }
         }
         const chainBonus = getChainBonus();
         if (chainBonus > 0) {
             addScore(chainBonus);
             scoreBreakdown.chain += chainBonus;
-            addLog(`チェインボーナス +${chainBonus}`);
+            addLog(tf('log_chain', chainBonus));
         }
     } else {
         if (judgment === 'good') { stats.good++; playGoodSound(); }
@@ -699,35 +702,36 @@ window.onTargetHit = function(judgment, targetType) {
         stats.totalHits++;
         stats.maxCombo = Math.max(stats.maxCombo, getCombo());
         resetPerfectStreak();
-        addLog(`${actualDamage}ダメージ コンボ${combo}${targetType !== 'normal' ? ' [' + targetType + ']' : ''}`);
+        const suffix = targetType !== 'normal' ? ' [' + targetType + ']' : '';
+        addLog(tf('log_good', actualDamage, combo, suffix));
     }
 
     if (combo === 50) {
         showLightningEffect();
         playMilestone50Sound();
-        addLog('⚡ 50コンボ!');
+        addLog(t('log_combo_50'));
         spawnComboParticles(window.innerWidth / 2, window.innerHeight / 2);
     } else if (combo === 75) {
         screenFlash();
-        addLog('75コンボ!');
+        addLog(t('log_combo_75'));
     } else if (combo === 100) {
         showLightningEffect();
         playMilestone50Sound();
-        addLog('🔥 100コンボ!');
+        addLog(t('log_combo_100'));
         spawnComboParticles(window.innerWidth / 2, window.innerHeight / 2);
     } else if (combo > 100 && combo % 100 === 0) {
         showLightningEffect();
         playMilestone50Sound();
-        addLog(`🔥 ${combo}コンボ!`);
+        addLog(tf('log_combo_100plus', combo));
         spawnComboParticles(window.innerWidth / 2, window.innerHeight / 2);
     } else if (combo > 50 && combo % 5 === 0) {
-        addLog(`${combo} コンボ`);
+        addLog(combo + ' ' + t('combo_label'));
     } else if (combo === 10) {
         screenFlash();
         playMilestone10Sound();
-        addLog('10コンボ!');
+        addLog(t('log_combo_10'));
     } else if (combo === 5) {
-        addLog('5コンボ!');
+        addLog(t('log_combo_5'));
     }
 
     if (combo >= 5 && combo % 5 === 0) {
@@ -740,7 +744,7 @@ window.onTargetHit = function(judgment, targetType) {
         st.feverCount = (st.feverCount || 0) + 1;
         saveStats(st);
         playFeverSound();
-        addLog('🔥 FEVER! 30秒間スコア2倍');
+        addLog(t('log_fever'));
     }
 
     const dsMult = getDoubleStrikeMultiplier();
@@ -753,7 +757,7 @@ window.onTargetHit = function(judgment, targetType) {
         scoreBreakdown.damage += dsScoreNoFever;
         if (isFever()) scoreBreakdown.feverBonus += Math.floor(extraDmg * scoreMult) - dsScoreNoFever;
         updateCombatInfo();
-        addLog(`連撃! x${dsMult} +${extraDmg}`);
+        addLog(tf('log_ds', dsMult, extraDmg));
         if (getEnemyHPPercent() <= 0) { enemyDefeated(); return; }
     }
 
@@ -766,7 +770,7 @@ window.onTargetHit = function(judgment, targetType) {
         scoreBreakdown.damage += luckyScoreNoFever;
         if (isFever()) scoreBreakdown.feverBonus += Math.floor(luckyDmg * scoreMult) - luckyScoreNoFever;
         updateCombatInfo();
-        addLog('🍀 ラッキー!');
+        addLog(t('log_lucky'));
         if (getEnemyHPPercent() <= 0) { enemyDefeated(); return; }
     }
 
@@ -779,7 +783,7 @@ window.onTargetHit = function(judgment, targetType) {
         scoreBreakdown.damage += echoScoreNoFever;
         if (isFever()) scoreBreakdown.feverBonus += Math.floor(echoDmg * scoreMult) - echoScoreNoFever;
         updateCombatInfo();
-        addLog(`エコー! +${echoDmg}`);
+        addLog(tf('log_echo', echoDmg));
         if (getEnemyHPPercent() <= 0) { enemyDefeated(); return; }
     }
 
@@ -797,12 +801,12 @@ window.onTargetMiss = function() {
     if (consumeBarrier()) {
         updateCombatInfo();
         playMissSound();
-        addLog(`障壁発動! 残り${getBarrierCharges()}回`);
+        addLog(tf('log_miss_barrier', getBarrierCharges()));
         return;
     }
 
     if (window.gameMode === 'endless') {
-        retireGame('Game Over');
+        retireGame(t('result_title_gameover'));
         return;
     }
 
@@ -811,12 +815,12 @@ window.onTargetMiss = function() {
         setCombo(getCombo() - reduction);
         updateCombatInfo();
         playMissSound();
-        addLog(`Miss... コンボ-${reduction}`);
+        addLog(tf('log_miss_safe', reduction));
     } else {
         resetCombo();
         updateCombatInfo();
         playMissSound();
-        addLog('Miss... コンボリセット');
+        addLog(t('log_miss_reset'));
     }
 };
 
@@ -841,13 +845,13 @@ function enemyDefeated() {
         const bonus = Math.min(phase, 10) * 15 * finisherBonus;
         addScore(bonus);
         scoreBreakdown.finisher += bonus;
-        addLog(`フィニッシャー +${bonus}`);
+        addLog(tf('log_finisher', bonus));
     }
 
     const maxPhase = getMaxPhase();
 
-    addLog(`フェーズ${phase}クリア！`);
-    showText(`フェーズ${phase}クリア！`);
+    addLog(tf('log_phase_clear', phase));
+    showText(tf('text_phase_clear', phase));
 
     if (phase >= maxPhase) {
         gameComplete();
@@ -858,10 +862,10 @@ function enemyDefeated() {
         const st2 = getStats();
         st2.bossDefeats = (st2.bossDefeats || 0) + 1;
         saveStats(st2);
-        showText('ボス撃破! 2つ選べ');
+        showText(t('text_boss_clear'));
         phaseTransitionTimer = setTimeout(() => showBossChoices(), 800);
     } else if (shouldOfferUpgrade()) {
-        showText('選択肢を選んでください');
+        showText(t('text_choose'));
         phaseTransitionTimer = setTimeout(() => showChoices(), 800);
     } else {
         nextPhase();
@@ -870,10 +874,10 @@ function enemyDefeated() {
         setEnemyHP(getEnemyHP(newPhase));
         resumeFeverSystem();
         updateInfoBar();
-        showText(`フェーズ${getPhase()}開始！`);
-        addLog(`フェーズ${getPhase()}開始`);
+        showText(tf('text_phase_new', getPhase()));
+        addLog(tf('log_phase_start', getPhase()));
         if (isBossPhase(newPhase + 1)) {
-            addLog(`⚠ 次はボスフェーズ (Phase ${newPhase + 1})！`);
+            addLog(tf('log_boss_hint', newPhase + 1));
         }
         gameState = 'playing';
         startGameLoop();
@@ -884,17 +888,17 @@ window.onChoiceSelected = function() {
     if (gameState !== 'phaseTransition') return;
     playSelectSound();
     lastUpgradePhase = getPhase();
-    addLog('選択肢決定');
+    addLog(t('log_choice_done'));
     nextPhase();
     const newPhase = getPhase();
     if (isBossPhase(newPhase)) setBossMode();
     setEnemyHP(getEnemyHP(newPhase));
     resumeFeverSystem();
     updateInfoBar();
-    showText(`フェーズ${getPhase()}開始！`);
-    addLog(`フェーズ${getPhase()}開始`);
+    showText(tf('text_phase_start', getPhase()));
+    addLog(tf('log_phase_start', getPhase()));
     if (isBossPhase(newPhase + 1)) {
-        addLog(`⚠ 次はボスフェーズ (Phase ${newPhase + 1})！`);
+        addLog(tf('log_boss_hint', newPhase + 1));
     }
     gameState = 'playing';
     startGameLoop();
@@ -942,31 +946,33 @@ function updateResultStats() {
         document.getElementById('stat-accuracy').textContent = '-';
     }
 
+    const upgNames = {1:'upgrade_attack',2:'upgrade_crit',3:'upgrade_combo',4:'upgrade_size',5:'upgrade_time',6:'upgrade_score',7:'upgrade_safe',8:'upgrade_chain',9:'upgrade_lucky',10:'upgrade_finisher',11:'upgrade_ds',12:'upgrade_absorb',13:'upgrade_echo',14:'upgrade_barrier',15:'upgrade_aura'};
     const list = document.getElementById('result-upgrade-list');
     list.innerHTML = '';
     const upgrades = getRunUpgrades ? getRunUpgrades() : [];
     if (upgrades.length === 0) {
-        list.innerHTML = '<div style="color:#555;font-size:13px;">なし</div>';
+        list.innerHTML = '<div style="color:#555;font-size:13px;">' + t('result_none') + '</div>';
     } else {
         const counts = {};
-        upgrades.forEach(u => { counts[u] = (counts[u] || 0) + 1; });
-        const maxIds = { 3: 'コンボ倍率UP', 4: 'ターゲット拡大', 5: '余裕UP', 8: 'チェイン', 9: 'ラッキー', 12: '吸収', 13: 'エコー' };
+        upgrades.forEach(id => { const n = upgNames[id]; if (n) { const display = t(n); counts[display] = (counts[display] || 0) + 1; } });
+        const maxIds = { 3: 'upgrade_combo', 4: 'upgrade_size', 5: 'upgrade_time', 8: 'upgrade_chain', 9: 'upgrade_lucky', 12: 'upgrade_absorb', 13: 'upgrade_echo' };
         const atMax = {};
-        for (const id in maxIds) {
-            const name = maxIds[id];
-            if (id === '3' && getComboMultiplierUp && getComboMultiplierUp() > 0) atMax[name] = true;
-            if (id === '4' && getTargetSizeBonus && getTargetSizeBonus() >= 0.30) atMax[name] = true;
-            if (id === '5' && getSpawnTimeBonus && getSpawnTimeBonus() >= 0.40) atMax[name] = true;
-            if (id === '8' && getChainBonus && getChainBonus() > 0) atMax[name] = true;
-            if (id === '9' && getLuckyChance && getLuckyChance() > 0) atMax[name] = true;
-            if (id === '12' && getAbsorbBonus && getAbsorbBonus() > 0) atMax[name] = true;
-            if (id === '13' && getEchoRate && getEchoRate() >= 0.40) atMax[name] = true;
-        }
-        for (const name in counts) {
+        Object.keys(maxIds).forEach(id => {
+            const langKey = maxIds[id];
+            const display = t(langKey);
+            if (id === '3' && getComboMultiplierUp && getComboMultiplierUp() > 0) atMax[display] = true;
+            if (id === '4' && getTargetSizeBonus && getTargetSizeBonus() >= 0.30) atMax[display] = true;
+            if (id === '5' && getSpawnTimeBonus && getSpawnTimeBonus() >= 0.40) atMax[display] = true;
+            if (id === '8' && getChainBonus && getChainBonus() > 0) atMax[display] = true;
+            if (id === '9' && getLuckyChance && getLuckyChance() > 0) atMax[display] = true;
+            if (id === '12' && getAbsorbBonus && getAbsorbBonus() > 0) atMax[display] = true;
+            if (id === '13' && getEchoRate && getEchoRate() >= 0.40) atMax[display] = true;
+        });
+        for (const display in counts) {
             const d = document.createElement('div');
-            const suffix = counts[name] > 1 ? ` ×${counts[name]}` : '';
-            const maxSuffix = atMax[name] ? ' (max)' : '';
-            d.textContent = name + suffix + maxSuffix;
+            const suffix = counts[display] > 1 ? ` ×${counts[display]}` : '';
+            const maxSuffix = atMax[display] ? ' (max)' : '';
+            d.textContent = display + suffix + maxSuffix;
             list.appendChild(d);
         }
     }
@@ -1008,7 +1014,7 @@ function retireGame(title) {
     const finalScore = getScore();
     const isNewRecord = saveHighScore(finalScore);
 
-    document.getElementById('result-title').textContent = title || 'リタイア';
+    document.getElementById('result-title').textContent = title || t('result_title_retire');
     document.getElementById('result-mode-display').textContent = getModeLabel();
     document.getElementById('final-score').textContent = finalScore.toLocaleString();
     const maxPhase = getMaxPhase();
@@ -1023,7 +1029,7 @@ function retireGame(title) {
     RESULT_SCREEN.classList.remove('hidden');
     document.getElementById('pause-overlay').classList.add('hidden');
     document.getElementById('fever-timer').classList.add('hidden');
-    addLog(`リタイア 最終スコア: ${finalScore.toLocaleString()}`);
+    addLog(tf('log_retire', finalScore.toLocaleString()));
     showResultRanking(finalScore, window.gameMode);
     const elapsed = Math.floor((Date.now() - startTime) / 1000);
     updateStatsEnd(finalScore, window.gameMode, elapsed);
@@ -1041,7 +1047,7 @@ function gameComplete() {
 
     const maxPhase2 = getMaxPhase();
 
-    document.getElementById('result-title').textContent = 'ゲームクリア！';
+    document.getElementById('result-title').textContent = t('result_title_clear');
     document.getElementById('result-mode-display').textContent = getModeLabel();
     document.getElementById('final-score').textContent = finalScore.toLocaleString();
     document.getElementById('final-phase').textContent = `${getPhase()} / ${maxPhase2}`;
@@ -1054,7 +1060,7 @@ function gameComplete() {
 
     RESULT_SCREEN.classList.remove('hidden');
     document.getElementById('fever-timer').classList.add('hidden');
-    addLog(`ゲームクリア！最終スコア: ${finalScore.toLocaleString()}`);
+    addLog(tf('log_clear', finalScore.toLocaleString()));
     showResultRanking(finalScore, window.gameMode);
     const elapsed = Math.floor((Date.now() - startTime) / 1000);
     updateStatsEnd(finalScore, window.gameMode, elapsed);
@@ -1410,7 +1416,7 @@ if (localStorage.getItem('comboBattlerAchievementsComplete')) {
 document.getElementById('bd-toggle').addEventListener('click', () => {
     const detail = document.getElementById('bd-detail');
     detail.classList.toggle('hidden');
-    document.getElementById('bd-toggle').textContent = detail.classList.contains('hidden') ? '[詳細▼]' : '[詳細▲]';
+    document.getElementById('bd-toggle').textContent = detail.classList.contains('hidden') ? t('result_detail_toggle') : t('result_detail_toggle_up');
 });
 
 function applyPreset() {

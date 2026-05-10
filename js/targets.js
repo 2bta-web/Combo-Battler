@@ -210,7 +210,7 @@ function getJudgment(progress) {
 }
 
 function showJudgmentText(judgment, x, y) {
-    const textMap = { perfect: 'Perfect!', good: 'Good', ok: 'OK', early: 'Early' };
+    const textMap = { perfect: t('perfect'), good: t('good'), ok: t('ok'), early: t('early') };
     const clsMap = { perfect: 'judgment-text perfect', good: 'judgment-text good', ok: 'judgment-text ok', early: 'judgment-text early' };
     const text = document.createElement('div');
     text.className = clsMap[judgment];
