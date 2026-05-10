@@ -1129,6 +1129,7 @@ body.flash {
 }
 #settings-volume-label { min-width: 30px; text-align: right; color: #88aaff; }
 #settings-close {
+    width: 100%;
     display: block;
     margin: 20px auto 0;
     padding: 8px 30px;
