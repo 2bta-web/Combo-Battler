@@ -165,6 +165,7 @@ document.getElementById('ranking-btn').addEventListener('click', () => {
 document.getElementById('ranking-close').addEventListener('click', () => {
     playCloseSound();
     document.getElementById('ranking-modal').classList.add('hidden');
+    rankingCache = {};
 });
 document.addEventListener('click', (e) => {
     if (e.target.closest('.ranking-tab')) {
@@ -231,6 +232,7 @@ document.getElementById('ranking-submit-btn').addEventListener('click', async ()
     }
 
     await submitScore(score, mode, phase);
+    delete rankingCache['result_' + mode];
     btn.textContent = t('result_rank_sent');
     btn.disabled = true;
     playConfirmSound();
