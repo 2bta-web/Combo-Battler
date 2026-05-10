@@ -460,8 +460,11 @@ document.getElementById('pause-shake').addEventListener('click', (e) => {
     try { localStorage.setItem('comboBattlerShake', opt.dataset.value); } catch(ex) {}
 });
 
-document.getElementById('lang-ja').addEventListener('click', () => setLang('ja'));
-document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
+document.getElementById('settings-lang').addEventListener('click', (e) => {
+    const opt = e.target.closest('.toggle-option');
+    if (!opt) return;
+    setLang(opt.dataset.lang);
+});
 
 START_SCREEN.addEventListener('click', (e) => {
     const btn = e.target.closest('.mode-btn');
