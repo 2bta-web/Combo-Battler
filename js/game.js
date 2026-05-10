@@ -7,6 +7,7 @@ const SB_URL = 'https://ssummgwuskpglukuzohw.supabase.co/rest/v1/scores';
 const SB_KEY = 'sb_publishable_Tgw3GYqTZQ494GhTXVmSzQ_PyV5VfoZ';
 let playerName = '';
 let deviceId = '';
+let rankingCache = {};
 
 function getDeviceId() {
     let id = localStorage.getItem('comboBattlerDeviceId');
@@ -203,6 +204,7 @@ document.getElementById('achievements-close').addEventListener('click', () => {
 document.getElementById('ranking-submit-btn').addEventListener('click', async () => {
     const btn = document.getElementById('ranking-submit-btn');
     if (btn.disabled) return;
+    btn.disabled = true;
     const score = getScore();
     const mode = window.gameMode;
     const phase = getPhase();
@@ -236,12 +238,21 @@ document.getElementById('ranking-submit-btn').addEventListener('click', async ()
 
 async function loadRanking(mode) {
     const list = document.getElementById('ranking-list');
+    if (rankingCache[mode]) {
+        renderRankingList(list, rankingCache[mode]);
+        return;
+    }
     list.innerHTML = '<div style="color:#666;padding:20px;">読み込み中...</div>';
     const data = await fetchRanking(mode, 10);
     if (!data || data.length === 0) {
         list.innerHTML = '<div style="color:#666;padding:20px;">まだデータがありません</div>';
         return;
     }
+    rankingCache[mode] = data;
+    renderRankingList(list, data);
+}
+
+function renderRankingList(list, data) {
     let myDevId = getDeviceId();
     list.innerHTML = '';
     data.forEach((r, i) => {
@@ -260,11 +271,21 @@ async function showResultRanking(score, mode) {
     el.classList.remove('hidden');
     list.innerHTML = '<span style="color:#666;">読み込み中...</span>';
     myrank.textContent = '';
+    const cacheKey = 'result_' + mode;
+    if (rankingCache[cacheKey]) {
+        renderResultRanking(list, myrank, rankingCache[cacheKey], score, mode);
+        return;
+    }
     const data = await fetchRanking(mode, 5);
     if (!data || data.length === 0) {
         list.innerHTML = '<span style="color:#555;">まだデータがありません</span>';
         return;
     }
+    rankingCache[cacheKey] = data;
+    renderResultRanking(list, myrank, data, score, mode);
+}
+
+function renderResultRanking(list, myrank, data, score, mode) {
     let myDevId = getDeviceId();
     list.innerHTML = '';
     let myPos = -1;
@@ -278,8 +299,9 @@ async function showResultRanking(score, mode) {
     if (myPos > 0) {
         myrank.textContent = 'あなたの順位: ' + myPos + '位';
     } else {
-        const rank = await fetchMyRank(score, mode);
-        if (rank > 0) myrank.textContent = 'あなたの順位: ' + rank + '位';
+        fetchMyRank(score, mode).then(rank => {
+            if (rank > 0) myrank.textContent = 'あなたの順位: ' + rank + '位';
+        });
     }
 }
 
