@@ -8,6 +8,7 @@ const SB_KEY = 'sb_publishable_Tgw3GYqTZQ494GhTXVmSzQ_PyV5VfoZ';
 let playerName = '';
 let deviceId = '';
 let rankingCache = {};
+let rankingFetching = {};
 
 function getDeviceId() {
     let id = localStorage.getItem('comboBattlerDeviceId');
@@ -242,8 +243,11 @@ async function loadRanking(mode) {
         renderRankingList(list, rankingCache[mode]);
         return;
     }
+    if (rankingFetching[mode]) return;
+    rankingFetching[mode] = true;
     list.innerHTML = '<div style="color:#666;padding:20px;">読み込み中...</div>';
     const data = await fetchRanking(mode, 10);
+    rankingFetching[mode] = false;
     if (!data || data.length === 0) {
         list.innerHTML = '<div style="color:#666;padding:20px;">まだデータがありません</div>';
         return;
@@ -276,7 +280,10 @@ async function showResultRanking(score, mode) {
         renderResultRanking(list, myrank, rankingCache[cacheKey], score, mode);
         return;
     }
+    if (rankingFetching[cacheKey]) return;
+    rankingFetching[cacheKey] = true;
     const data = await fetchRanking(mode, 5);
+    rankingFetching[cacheKey] = false;
     if (!data || data.length === 0) {
         list.innerHTML = '<span style="color:#555;">まだデータがありません</span>';
         return;
