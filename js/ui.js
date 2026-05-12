@@ -19,10 +19,10 @@ function animateScore() {
     var target = getScore();
     if (displayScore === target) { scoreAnimId = null; return; }
     var diff = target - displayScore;
-    if (Math.abs(diff) <= 1) {
+    if (Math.abs(diff) < 2) {
         displayScore = target;
     } else {
-        displayScore += Math.ceil(diff * 0.25);
+        displayScore += Math.max(1, Math.floor(Math.abs(diff) * 0.3)) * (diff > 0 ? 1 : -1);
         if ((diff > 0 && displayScore > target) || (diff < 0 && displayScore < target)) {
             displayScore = target;
         }
@@ -30,6 +30,8 @@ function animateScore() {
     document.getElementById('score-display').textContent = Math.round(displayScore).toLocaleString();
     if (displayScore !== target) {
         scoreAnimId = requestAnimationFrame(animateScore);
+    } else {
+        scoreAnimId = null;
     }
 }
 

@@ -922,7 +922,6 @@ function enemyDefeated() {
     const maxPhase = getMaxPhase();
 
     addLog(tf('log_phase_clear', phase));
-    showPhaseTransition(getPhase(), maxPhase);
 
     if (phase >= maxPhase) {
         gameComplete();
