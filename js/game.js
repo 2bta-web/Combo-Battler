@@ -3,6 +3,14 @@ let gameLoopId = null;
 let targetSpawnTimer = null;
 let phaseTransitionTimer = null;
 let isPausing = false;
+let hitStopRemaining = 0;
+let hitStopStartTime = 0;
+
+function setHitStop(ms) {
+    hitStopRemaining = ms;
+    hitStopStartTime = performance.now();
+}
+window.setHitStop = setHitStop;
 const SB_URL = 'https://ssummgwuskpglukuzohw.supabase.co/rest/v1/scores';
 const SB_KEY = 'sb_publishable_Tgw3GYqTZQ494GhTXVmSzQ_PyV5VfoZ';
 let playerName = '';
@@ -482,6 +490,7 @@ function startGame(mode) {
     window.gameCleared = false;
     startTime = Date.now();
     gameState = 'playing';
+    document.body.classList.add('playing');
     START_SCREEN.classList.add('hidden');
     RESULT_SCREEN.classList.add('hidden');
     playerName = '';
@@ -528,6 +537,13 @@ function startGameLoop() {
 }
 
 function update(time) {
+    if (hitStopRemaining > 0) {
+        if (performance.now() - hitStopStartTime < hitStopRemaining) {
+            gameLoopId = requestAnimationFrame(update);
+            return;
+        }
+        hitStopRemaining = 0;
+    }
     if (gameState === 'playing') {
         const ft = document.getElementById('fever-timer');
         if (isFever()) {
@@ -540,11 +556,46 @@ function update(time) {
             ft.style.color = '#666';
             const remaining = Math.ceil((window.feverCooldownEnd - Date.now()) / 1000);
             document.getElementById('fever-timer-text').textContent = `準備中 ${remaining}s`;
-        } else if (window.feverCooldownEnd) {
+        } else         if (window.feverCooldownEnd) {
             ft.classList.add('hidden');
             window.feverCooldownEnd = 0;
         }
+        updateComboHeat();
+        updateBackground();
+        if (typeof updateParticles === 'function') updateParticles();
         gameLoopId = requestAnimationFrame(update);
+    }
+}
+
+var currentComboHeat = 0;
+function updateComboHeat() {
+    var c = getCombo();
+    var newHeat = 0;
+    if (c >= 100) newHeat = 100;
+    else if (c >= 50) newHeat = 50;
+    else if (c >= 30) newHeat = 30;
+    else if (c >= 10) newHeat = 10;
+    if (newHeat !== currentComboHeat) {
+        var enemyArea = document.getElementById('enemy-area');
+        enemyArea.classList.remove('combo-heat-10', 'combo-heat-30', 'combo-heat-50', 'combo-heat-100');
+        if (newHeat > 0) enemyArea.classList.add('combo-heat-' + newHeat);
+        currentComboHeat = newHeat;
+    }
+}
+
+var targetBgColor = '';
+function updateBackground() {
+    var phase = getPhase();
+    var colors = [
+        '#1a1a2e', '#1a1a38', '#1a1a42', '#1a1a4c', '#1a1a56',
+        '#1a1a60', '#1a1a6a', '#1a1a74', '#1a1a7e', '#1a1a88'
+    ];
+    var idx = Math.min(phase - 1, colors.length - 1);
+    if (idx < 0) idx = 0;
+    var c = colors[idx];
+    if (c !== targetBgColor) {
+        targetBgColor = c;
+        document.body.style.background = c;
     }
 }
 
@@ -567,6 +618,7 @@ function pauseGame() {
         document.getElementById('choice-modal').classList.add('hidden');
     }
     gameState = 'paused';
+    document.body.classList.remove('playing');
     if (targetSpawnTimer) { clearTimeout(targetSpawnTimer); targetSpawnTimer = null; }
     if (phaseTransitionTimer) { clearTimeout(phaseTransitionTimer); phaseTransitionTimer = null; }
     if (typeof staggeredTimeouts !== 'undefined') {
@@ -599,6 +651,7 @@ function resumeGame() {
     if (gameState !== 'paused') return;
     isPausing = false;
     gameState = window.wasChoiceOpen ? 'phaseTransition' : 'playing';
+    if (gameState === 'playing') document.body.classList.add('playing');
     if (window.wasChoiceOpen) {
         const optionsEl = document.getElementById('choice-options');
         if (!optionsEl || optionsEl.children.length === 0) {
@@ -916,6 +969,7 @@ function getEnemyHP(phase) {
 
 function goToTitle() {
     gameState = 'start';
+    document.body.classList.remove('playing');
     if (targetSpawnTimer) { clearTimeout(targetSpawnTimer); targetSpawnTimer = null; }
     if (phaseTransitionTimer) { clearTimeout(phaseTransitionTimer); phaseTransitionTimer = null; }
     RESULT_SCREEN.classList.add('hidden');
@@ -1010,6 +1064,7 @@ function formatPlayTime() {
 
 function retireGame(title) {
     gameState = 'result';
+    document.body.classList.remove('playing');
     isPausing = false;
     if (targetSpawnTimer) { clearTimeout(targetSpawnTimer); targetSpawnTimer = null; }
     if (phaseTransitionTimer) { clearTimeout(phaseTransitionTimer); phaseTransitionTimer = null; }
@@ -1042,6 +1097,7 @@ function retireGame(title) {
 
 function gameComplete() {
     gameState = 'result';
+    document.body.classList.remove('playing');
     isPausing = false;
     window.gameCleared = true;
     if (phaseTransitionTimer) { clearTimeout(phaseTransitionTimer); phaseTransitionTimer = null; }

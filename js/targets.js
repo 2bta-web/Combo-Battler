@@ -5,6 +5,7 @@ let staggeredTimeouts = [];
 let batchIdCounter = 0;
 let currentBatchId = 0;
 let mouseX = 0, mouseY = 0;
+let inputBuffer = null;
 
 const TARGET_POSITIONS = [];
 
@@ -17,6 +18,12 @@ function initTargets() {
 document.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
+});
+
+document.addEventListener('mousedown', function(e) {
+    if (window.getGameState && window.getGameState() === 'playing') {
+        inputBuffer = { x: e.clientX, y: e.clientY, time: performance.now() };
+    }
 });
 
 document.addEventListener('keydown', (e) => {
@@ -133,6 +140,7 @@ function createTarget(phase, position, batchId) {
 
     el.addEventListener('click', (e) => {
         e.stopPropagation();
+        inputBuffer = null;
         if (!entry.hit && entry.isClickable) {
             handleTargetHit(entry);
         }
@@ -151,6 +159,7 @@ function handleTargetHit(entry) {
     if (entry.hit || !entry.isClickable) return;
     entry.hit = true;
     if (entry.timeout) clearTimeout(entry.timeout);
+    if (window.setHitStop) window.setHitStop(50);
 
     const elapsed = Date.now() - entry.startTime;
     const progress = elapsed / entry.approachTime;
@@ -193,6 +202,13 @@ function handleTargetMiss(entry) {
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
     spawnMissParticles(cx, cy);
+
+    var missX = document.createElement('div');
+    missX.className = 'miss-mark';
+    missX.style.left = cx + 'px';
+    missX.style.top = cy + 'px';
+    document.body.appendChild(missX);
+    setTimeout(function() { missX.remove(); }, 500);
 
     setTimeout(() => {
         entry.el.remove();
@@ -296,3 +312,30 @@ function getTargetTypeForPhase(phase) {
     if (phase >= 2 && roll < 0.50) return 'purple';
     return 'normal';
 }
+
+(function inputBufferLoop() {
+    if (inputBuffer && performance.now() - inputBuffer.time < 55) {
+        for (var i = 0; i < activeTargets.length; i++) {
+            var entry = activeTargets[i];
+            if (!entry.hit && entry.isClickable) {
+                var elapsed = Date.now() - entry.startTime;
+                var progress = elapsed / entry.approachTime;
+                if (progress >= 0.67) {
+                    var rect = entry.el.getBoundingClientRect();
+                    if (inputBuffer.x >= rect.left && inputBuffer.x <= rect.right &&
+                        inputBuffer.y >= rect.top && inputBuffer.y <= rect.bottom) {
+                        handleTargetHit(entry);
+                        inputBuffer = null;
+                        break;
+                    }
+                }
+            }
+        }
+        if (inputBuffer && performance.now() - inputBuffer.time >= 50) {
+            inputBuffer = null;
+        }
+    } else if (inputBuffer && performance.now() - inputBuffer.time >= 55) {
+        inputBuffer = null;
+    }
+    requestAnimationFrame(inputBufferLoop);
+})();

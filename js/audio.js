@@ -29,9 +29,10 @@ function playTone(freq, endFreq, type, duration, volume, delay) {
     osc.connect(gain);
     gain.connect(masterGain);
     osc.type = type;
-    osc.frequency.setValueAtTime(freq, t);
-    if (endFreq != null) osc.frequency.exponentialRampToValueAtTime(endFreq, t + duration);
-    gain.gain.setValueAtTime(volume, t);
+    var freqVar = freq * (0.92 + Math.random() * 0.16);
+    osc.frequency.setValueAtTime(freqVar, t);
+    if (endFreq != null) osc.frequency.exponentialRampToValueAtTime(endFreq * (0.92 + Math.random() * 0.16), t + duration);
+    gain.gain.setValueAtTime(volume * (0.90 + Math.random() * 0.20), t);
     gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
     osc.start(t);
     osc.stop(t + duration);

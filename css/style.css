@@ -10,6 +10,11 @@ body {
     color: #e8e8e8;
     overflow: hidden;
     user-select: none;
+    transition: background 1.5s ease;
+}
+
+body.playing {
+    cursor: crosshair;
 }
 
 body.shake {
@@ -154,6 +159,26 @@ body.flash {
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: box-shadow 0.5s ease;
+}
+
+#enemy-area.combo-heat-10 {
+    box-shadow: inset 0 0 30px rgba(255, 200, 0, 0.15);
+}
+#enemy-area.combo-heat-30 {
+    box-shadow: inset 0 0 50px rgba(255, 120, 0, 0.25);
+}
+#enemy-area.combo-heat-50 {
+    box-shadow: inset 0 0 80px rgba(255, 50, 0, 0.35);
+}
+#enemy-area.combo-heat-100 {
+    box-shadow: inset 0 0 120px rgba(255, 0, 100, 0.45);
+    animation: comboGlow 1s ease-in-out infinite alternate;
+}
+
+@keyframes comboGlow {
+    from { box-shadow: inset 0 0 80px rgba(255, 0, 100, 0.35); }
+    to   { box-shadow: inset 0 0 140px rgba(255, 0, 180, 0.55); }
 }
 
 #enemy {
@@ -219,10 +244,20 @@ body.flash {
     animation: enemyHit 0.15s ease;
 }
 
+.hit-flash {
+    animation: enemyFlash 0.12s ease;
+}
+
 @keyframes enemyHit {
     0% { transform: scale(1); }
     50% { transform: scale(1.15); }
     100% { transform: scale(1); }
+}
+
+@keyframes enemyFlash {
+    0% { filter: brightness(1); }
+    30% { filter: brightness(3); }
+    100% { filter: brightness(1); }
 }
 
 .enemy-lightning {
@@ -256,6 +291,16 @@ body.flash {
     width: 100%;
     height: 100%;
     background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
+    transition: width 0.2s ease-out;
+}
+
+#enemy-hp-fill.hp-critical {
+    animation: hpPulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes hpPulse {
+    from { opacity: 1; }
+    to { opacity: 0.5; }
 }
 
 #damage-popup-container {
@@ -334,6 +379,10 @@ body.flash {
     transition: transform 0.1s ease;
     -webkit-tap-highlight-color: transparent;
     outline: none;
+}
+
+body.playing .target {
+    cursor: crosshair;
 }
 
 .target-inner {
@@ -469,6 +518,23 @@ body.flash {
     z-index: 15;
 }
 
+.miss-mark {
+    position: fixed;
+    font-size: 32px;
+    color: #ff4444;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 20;
+    transform: translate(-50%, -50%);
+    animation: missXPop 0.4s ease forwards;
+}
+
+@keyframes missXPop {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    30% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1) translateY(-20px); }
+}
+
 /* Text Box (bottom) */
 #text-box {
     height: 90px;
@@ -563,15 +629,21 @@ body.flash {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(10, 10, 25, 0.95);
+    background: rgba(10, 10, 25, 0.98);
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
     z-index: 300;
     padding: 30px 20px;
     overflow-y: auto;
     box-sizing: border-box;
+    transition: opacity 0.25s ease;
+}
+
+#result-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
 }
 
 #result-screen.hidden {
@@ -800,10 +872,12 @@ body.flash {
     justify-content: center;
     align-items: center;
     z-index: 400;
+    transition: opacity 0.25s ease;
 }
 
 #start-screen.hidden {
-    display: none;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .start-title {

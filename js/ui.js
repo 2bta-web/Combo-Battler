@@ -1,22 +1,46 @@
 let logCount = 0;
 const MAX_LOG_ENTRIES = 12;
 let prevCombo = 0;
+let displayScore = 0;
+let scoreAnimId = null;
 
 function initUI() {
+    displayScore = getScore();
     updateInfoBar();
     clearLog();
     clearText();
 }
 
 function updateInfoBar() {
-    document.getElementById('phase-display').textContent = `${getPhase()} / ${getPhaseCount()}`;
+    document.getElementById('phase-display').textContent = getPhase() + ' / ' + getPhaseCount();
     updateCombatInfo();
 }
 
+function animateScore() {
+    var target = getScore();
+    if (displayScore === target) return;
+    var diff = target - displayScore;
+    if (Math.abs(diff) <= 1) {
+        displayScore = target;
+    } else {
+        displayScore += Math.ceil(diff * 0.25);
+        if ((diff > 0 && displayScore > target) || (diff < 0 && displayScore < target)) {
+            displayScore = target;
+        }
+    }
+    document.getElementById('score-display').textContent = Math.round(displayScore).toLocaleString();
+    if (displayScore !== target) {
+        scoreAnimId = requestAnimationFrame(animateScore);
+    }
+}
+
 function updateCombatInfo() {
-    document.getElementById('score-display').textContent = getScore().toLocaleString();
-    const combo = getCombo();
-    const comboEl = document.getElementById('combo-number');
+    var target = getScore();
+    if (displayScore !== target && !scoreAnimId) {
+        scoreAnimId = requestAnimationFrame(animateScore);
+    }
+    var combo = getCombo();
+    var comboEl = document.getElementById('combo-number');
     comboEl.textContent = combo;
     if (combo > prevCombo && combo > 1) {
         comboEl.classList.remove('combo-pop');
@@ -24,7 +48,7 @@ function updateCombatInfo() {
         comboEl.classList.add('combo-pop');
     }
     prevCombo = combo;
-    document.getElementById('multiplier-display').textContent = `x${getMultiplier().toFixed(1)}`;
+    document.getElementById('multiplier-display').textContent = 'x' + getMultiplier().toFixed(1);
 }
 
 function addLog(message) {

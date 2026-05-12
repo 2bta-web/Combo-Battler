@@ -1,43 +1,72 @@
 const PARTICLE_CONTAINER = document.getElementById('target-layer');
 
-function spawnParticles(x, y, count, color, speed = 3) {
-    for (let i = 0; i < count; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        const size = 3 + Math.random() * 5;
-        particle.style.width = `${size}px`;
-        particle.style.height = `${size}px`;
-        particle.style.background = color;
-        particle.style.left = `${x}px`;
-        particle.style.top = `${y}px`;
-        particle.style.boxShadow = `0 0 ${size}px ${color}`;
+var particlePool = [];
+var POOL_SIZE = 80;
 
-        const angle = Math.random() * Math.PI * 2;
-        const velocity = 1 + Math.random() * speed;
-        const vx = Math.cos(angle) * velocity;
-        const vy = Math.sin(angle) * velocity;
-        const life = 400 + Math.random() * 400;
+function initParticlePool() {
+    for (var i = 0; i < POOL_SIZE; i++) {
+        var p = document.createElement('div');
+        p.className = 'particle';
+        p.style.display = 'none';
+        PARTICLE_CONTAINER.appendChild(p);
+        particlePool.push({ el: p, active: false, life: 0, startTime: 0, vx: 0, vy: 0 });
+    }
+}
 
-        PARTICLE_CONTAINER.appendChild(particle);
+function acquireParticle() {
+    for (var i = 0; i < particlePool.length; i++) {
+        if (!particlePool[i].active) return particlePool[i];
+    }
+    var oldest = particlePool[0];
+    oldest.el.style.display = 'none';
+    oldest.active = false;
+    return oldest;
+}
 
-        let startTime = Date.now();
-        function animateParticle() {
-            const elapsed = Date.now() - startTime;
-            if (elapsed >= life) {
-                particle.remove();
-                return;
-            }
-            const progress = elapsed / life;
-            const cx = parseFloat(particle.style.left);
-            const cy = parseFloat(particle.style.top);
-            particle.style.left = `${cx + vx}px`;
-            particle.style.top = `${cy + vy + 0.15}px`;
-            particle.style.opacity = 1 - progress;
-            particle.style.transform = `scale(${1 - progress * 0.5})`;
-            requestAnimationFrame(animateParticle);
+function spawnParticles(x, y, count, color, speed) {
+    speed = speed || 3;
+    for (var i = 0; i < count; i++) {
+        var p = acquireParticle();
+        var el = p.el;
+        var size = 3 + Math.random() * 5;
+        el.style.width = size + 'px';
+        el.style.height = size + 'px';
+        el.style.background = color;
+        el.style.left = x + 'px';
+        el.style.top = y + 'px';
+        el.style.opacity = '1';
+        el.style.transform = 'scale(1)';
+        el.style.display = '';
+        el.style.boxShadow = '0 0 ' + size + 'px ' + color;
+
+        var angle = Math.random() * Math.PI * 2;
+        var velocity = 1 + Math.random() * speed;
+        p.vx = Math.cos(angle) * velocity;
+        p.vy = Math.sin(angle) * velocity;
+        p.life = 400 + Math.random() * 400;
+        p.startTime = performance.now();
+        p.active = true;
+    }
+}
+
+function updateParticles() {
+    var now = performance.now();
+    for (var i = 0; i < particlePool.length; i++) {
+        var p = particlePool[i];
+        if (!p.active) continue;
+        var elapsed = now - p.startTime;
+        if (elapsed >= p.life) {
+            p.el.style.display = 'none';
+            p.active = false;
+            continue;
         }
-
-        requestAnimationFrame(animateParticle);
+        var progress = elapsed / p.life;
+        var cx = parseFloat(p.el.style.left) || 0;
+        var cy = parseFloat(p.el.style.top) || 0;
+        p.el.style.left = (cx + p.vx) + 'px';
+        p.el.style.top = (cy + p.vy + 0.15) + 'px';
+        p.el.style.opacity = 1 - progress;
+        p.el.style.transform = 'scale(' + (1 - progress * 0.5) + ')';
     }
 }
 
@@ -55,5 +84,7 @@ function spawnMissParticles(x, y) {
 
 function spawnComboParticles(x, y) {
     spawnParticles(x, y, 20, '#ffd700', 6);
-    setTimeout(() => spawnParticles(x, y, 10, '#ff6b6b', 4), 100);
+    setTimeout(function() { spawnParticles(x, y, 10, '#ff6b6b', 4); }, 100);
 }
+
+initParticlePool();
