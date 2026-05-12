@@ -609,6 +609,19 @@ function spawnNextTarget() {
     }, spawnDelay);
 }
 
+function showPhaseTransition(phaseNum, maxPhase) {
+    var el = document.getElementById('phase-transition');
+    if (!el) return;
+    if (maxPhase === Infinity) {
+        el.textContent = 'Phase ' + phaseNum;
+    } else {
+        el.textContent = 'Phase ' + phaseNum + ' / ' + maxPhase;
+    }
+    el.classList.remove('show');
+    void el.offsetWidth;
+    el.classList.add('show');
+}
+
 function pauseGame() {
     if (gameState !== 'playing' && gameState !== 'phaseTransition') return;
     if (isPausing) return;
@@ -909,7 +922,7 @@ function enemyDefeated() {
     const maxPhase = getMaxPhase();
 
     addLog(tf('log_phase_clear', phase));
-    showText(tf('text_phase_clear', phase));
+    showPhaseTransition(getPhase(), maxPhase);
 
     if (phase >= maxPhase) {
         gameComplete();
@@ -934,6 +947,7 @@ function enemyDefeated() {
         updateInfoBar();
         showText(tf('text_phase_new', getPhase()));
         addLog(tf('log_phase_start', getPhase()));
+        showPhaseTransition(getPhase(), getMaxPhase());
         if (isBossPhase(newPhase + 1)) {
             addLog(tf('log_boss_hint', newPhase + 1));
         }
@@ -955,6 +969,7 @@ window.onChoiceSelected = function() {
     updateInfoBar();
     showText(tf('text_phase_start', getPhase()));
     addLog(tf('log_phase_start', getPhase()));
+    showPhaseTransition(getPhase(), getMaxPhase());
     if (isBossPhase(newPhase + 1)) {
         addLog(tf('log_boss_hint', newPhase + 1));
     }
@@ -1224,7 +1239,7 @@ function getGameState() {
 }
 
 /* Layout editor */
-const LAYOUT_ITEMS = ['phase-area', 'score-area', 'combo-area', 'log-container', 'streak-area', 'fever-timer'];
+const LAYOUT_ITEMS = ['score-area', 'combo-area', 'log-container', 'streak-area', 'fever-timer'];
 
 function openLayoutEditor() {
     document.getElementById('settings-modal').classList.add('hidden');
@@ -1484,7 +1499,6 @@ function applyPreset() {
     const gw = window.innerWidth;
     const MARGIN = 60;
     const preset = {
-        'phase-area': { top: 10, left: 883, w: 109, h: 77 },
         'score-area': { top: 10, left: 1436 },
         'combo-area': { top: 694, left: 888, w: 99, h: 166 },
         'streak-area': { top: 773, left: 891, w: 93, h: 57 },

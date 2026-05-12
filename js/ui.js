@@ -12,13 +12,12 @@ function initUI() {
 }
 
 function updateInfoBar() {
-    document.getElementById('phase-display').textContent = getPhase() + ' / ' + getPhaseCount();
     updateCombatInfo();
 }
 
 function animateScore() {
     var target = getScore();
-    if (displayScore === target) return;
+    if (displayScore === target) { scoreAnimId = null; return; }
     var diff = target - displayScore;
     if (Math.abs(diff) <= 1) {
         displayScore = target;

@@ -41,36 +41,52 @@ body.flash {
     width: 100vw;
     height: 100vh;
     position: relative;
-    display: flex;
-    flex-direction: column;
 }
 
-
-#phase-area, #score-area {
+#phase-transition {
     position: absolute;
-    top: 10px;
-    text-align: center;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 64px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.20);
+    pointer-events: none;
+    z-index: 25;
+    opacity: 0;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+#phase-transition.show {
+    animation: phaseReveal 1.8s ease forwards;
+}
+
+@keyframes phaseReveal {
+    0%   { opacity: 0; transform: translate(-50%, -50%) scale(1.3); }
+    16%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    72%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.85); }
+}
+
+/* Score area - minimal */
+#score-area {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    text-align: right;
     z-index: 100;
     pointer-events: none;
 }
-#phase-area { left: 160px; }
-#score-area { right: 160px; }
 
-.info-label {
-    font-size: 17px;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+#score-display {
+    font-size: 28px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.55);
     display: block;
+    letter-spacing: 2px;
 }
 
-#phase-display, #score-display {
-    font-size: 32px;
-    font-weight: bold;
-    color: #f0f0f0;
-    display: block;
-    line-height: 1.2;
-}
 
 /* Combo area - top right */
 #combo-area {
@@ -131,7 +147,8 @@ body.flash {
     left: 10px;
     width: 360px;
     max-height: 480px;
-    z-index: 50;
+    overflow: hidden;
+    z-index: 100;
     pointer-events: none;
 }
 
@@ -154,8 +171,9 @@ body.flash {
 }
 
 #enemy-area {
-    flex: 1;
-    position: relative;
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -537,20 +555,25 @@ body.playing .target {
 
 /* Text Box (bottom) */
 #text-box {
-    height: 90px;
-    background: rgba(20, 20, 35, 0.95);
-    border-top: 1px solid #3a3a5a;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background: transparent;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10px 20px;
-    z-index: 100;
+    z-index: 90;
 }
 
 #text-content {
-    font-size: 18px;
-    color: #ccc;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.25);
     text-align: center;
+    font-weight: 300;
+    letter-spacing: 1px;
 }
 
 /* Choice Modal */
